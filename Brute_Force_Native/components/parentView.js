@@ -64,16 +64,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   studentName: {
-    fontSize: 20, // Add this line to set the font size
-    // ... (any other styles you have or want to add)
+    fontSize: 20, 
   },
   alertText: {
-    fontSize: 16, // Add this line to set the font size
+    fontSize: 16,
     color: 'red',
-    // ... (any other styles you have or want to add)
+
   },
   buttonContainer: {
-    backgroundColor: '#D9D9D9', // or any other color you like
+    backgroundColor: '#D9D9D9', 
     padding: 10, // Reduced padding
     borderRadius: 5,
     margin: 5,
