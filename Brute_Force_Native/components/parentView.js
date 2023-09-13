@@ -11,6 +11,10 @@ const ParentView = ({ navigation }) => {
       headerTitleAlign: 'center'
     });
   }, [navigation]);
+
+  const navigateToStudentOverview = () => {
+    navigation.navigate('StudentOverview');
+  }
   
   
   const getButtonStyle = (text, id) => {
@@ -32,14 +36,16 @@ const ParentView = ({ navigation }) => {
       {/* <Text numberOfLines={1} style={styles.PortalEdHeader}>Portal Ed</Text> */}
       <Text style={styles.GuardianName}>Parent Name</Text>
 
-      <TouchableOpacity style={[styles.buttonContainer, getButtonStyle('Student Name', 'textLength')]}>
+      <TouchableOpacity style={[styles.buttonContainer, getButtonStyle('Student Name', 'textLength')]}
+                        onPress={navigateToStudentOverview}> 
         <View style={styles.buttonContent}>
           <Text numberOfLines={1} style={styles.studentName}>Student Name</Text>
           <Text style={styles.alertText}>2 Unacknowledged Alerts!</Text>
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.buttonContainer, getButtonStyle('Another Student', 'textLength2')]}>
+      <TouchableOpacity style={[styles.buttonContainer, getButtonStyle('Another Student', 'textLength2')]}
+                        onPress={navigateToStudentOverview}>
         <View style={styles.buttonContent}>
           <Text numberOfLines={1} style={styles.studentName}>Another Student</Text>
           <Text style={styles.studentId}>0 Unacknowledged Alerts</Text>
