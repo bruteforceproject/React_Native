@@ -1,6 +1,10 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 
+const goodColor = "#558c3b";
+const okColor = "#f2ca52";
+const badColor = "#f25d50";
+
 function StudentOverview() {
   return (
     <View style={styles.container}>
@@ -14,63 +18,87 @@ function StudentOverview() {
           period="Period 0: Chemistry"
           teacherName="B. Banana"
           academicsImgSource={require('../assets/academics.png')}
+          academicsColor = {goodColor}
           attendanceImgSource={require('../assets/attendance.png')}
+          attendanceColor = {okColor}
           behaviorImgSource={require('../assets/behavior.png')}
+          behaviorColor = {badColor}
         />
         <PeriodCard
           period="Period 1: Biology"
           teacherName="A. Apple"
           academicsImgSource={require('../assets/academics.png')}
+          academicsColor={goodColor}
           attendanceImgSource={require('../assets/attendance.png')}
+          attendanceColor = {goodColor}
           behaviorImgSource={require('../assets/behavior.png')}
+          behaviorColor = {okColor}
         />
 
         <PeriodCard
           period="Period 2: Math"
           teacherName="C. Cherry"
           academicsImgSource={require('../assets/academics.png')}
+          academicsColor = {badColor}
           attendanceImgSource={require('../assets/attendance.png')}
+          attendanceColor = {okColor}
           behaviorImgSource={require('../assets/behavior.png')}
+          behaviorColor = {badColor}
         />
 
         <PeriodCard
           period="Period 3: English"
           teacherName="M. Mango"
           academicsImgSource={require('../assets/academics.png')}
+          academicsColor = {okColor}
           attendanceImgSource={require('../assets/attendance.png')}
+          attendanceColor = {okColor}
           behaviorImgSource={require('../assets/behavior.png')}
+          behaviorColor = {okColor}
         />
 
         <PeriodCard
           period="Period 4: Art"
           teacherName="O. Orange"
           academicsImgSource={require('../assets/academics.png')}
+          academicsColor = {goodColor}
           attendanceImgSource={require('../assets/attendance.png')}
+          attendanceColor = {okColor}
           behaviorImgSource={require('../assets/behavior.png')}
+          behaviorColor = {goodColor}
         />
 
         <PeriodCard
           period="Period 5: Physical Education"
           teacherName="W. Watermelon"
           academicsImgSource={require('../assets/academics.png')}
+          academicsColor = {goodColor}
           attendanceImgSource={require('../assets/attendance.png')}
+          attendanceColor = {goodColor}
           behaviorImgSource={require('../assets/behavior.png')}
+          behaviorColor = {okColor}
         />
 
         <PeriodCard
           period="Period 6: History"
           teacherName="D. Dragonfruit"
           academicsImgSource={require('../assets/academics.png')}
+          academicsColor = {goodColor}
           attendanceImgSource={require('../assets/attendance.png')}
+          attendanceColor = {goodColor}
           behaviorImgSource={require('../assets/behavior.png')}
+          behaviorColor = {goodColor}
         />
 
         <PeriodCard
           period="Period 7: Elective"
           teacherName="B. Blueberry"
           academicsImgSource={require('../assets/academics.png')}
+          academicsColor = {goodColor}
           attendanceImgSource={require('../assets/attendance.png')}
+          attendanceColor = {badColor}
           behaviorImgSource={require('../assets/behavior.png')}
+          behaviorColor = {goodColor}
         />
     
       </View>
@@ -79,14 +107,14 @@ function StudentOverview() {
   );
 }
 
-function PeriodCard({ period, teacherName, academicsImgSource, attendanceImgSource, behaviorImgSource }) {
+function PeriodCard({ period, teacherName, academicsImgSource, attendanceImgSource, behaviorImgSource, academicsColor, attendanceColor, behaviorColor }) {
   return (
     <View style={styles.periodCard}>
       <Text style={styles.periodText}><Text style={styles.boldText}>Period:</Text> {period}</Text>
       <View style={styles.imageContainer}>
-        <Image source={academicsImgSource} style={styles.image} />
-        <Image source={attendanceImgSource} style={styles.image} />
-        <Image source={behaviorImgSource} style={styles.image} />
+        <Image source={academicsImgSource} style={[styles.image, {backgroundColor: academicsColor}]} />
+        <Image source={attendanceImgSource} style={[styles.image, {backgroundColor: attendanceColor}]} />
+        <Image source={behaviorImgSource} style={[styles.image, {backgroundColor: behaviorColor}]} />
       </View>
       <Text style={styles.teacherText}><Text style={styles.boldText}>Teacher Name:</Text> {teacherName}</Text>
     </View>
@@ -114,9 +142,10 @@ const styles = StyleSheet.create({
 
   periodCard: {
     marginBottom: 20,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#ccc',
     padding: 20,
+    borderRadius: 10,
   },
   periodText: {
     fontSize: 18,
