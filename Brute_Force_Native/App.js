@@ -15,6 +15,10 @@ export default function App() {
       <SignInScreen/>
     </SafeAreaView>
    
+    // You can un-comment the section below and comment out the above code to view
+    // the Parentview and student overview below.
+
+
     // <NavigationContainer>
     //   <Stack.Navigator initialRouteName="ParentView">
     //     <Stack.Screen name="ParentView" component={ParentView} />
