@@ -2,6 +2,8 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignInScreen from './src/screens/sign-in/sign-in';
+import ForgotPasswordScreen from './src/screens/forgot-password/forgot-password';
+import PhoneNumberConfirmationScreen from './src/screens/phone-number-confirmation/phone-number-confirmation';
 import ParentView from './components/parentView'; // This should match what you've exported
 import StudentOverview from './components/studentOverview';
 import { SafeAreaView , StyleSheet} from 'react-native';
@@ -12,7 +14,7 @@ export default function App() {
   return (
 
     <SafeAreaView style={styles.root}>
-      <SignInScreen/>
+      <PhoneNumberConfirmationScreen/>
     </SafeAreaView>
    
     // You can un-comment the section below and comment out the above code to view

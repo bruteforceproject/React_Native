@@ -3,28 +3,32 @@ import { View, Text , Image, StyleSheet, useWindowDimensions, ScrollView} from '
 import Logo from '../../../assets/TransparentPELogo.png';
 import FieldInput from '../../components/field-inputs/field-input';
 import SignInButton from '../../components/sign-in-button/sign-in-button';
+import VisibleText from '../../components/text/text';
 
-const SignInScreen = () => {
+const ForgotPasswordScreen = () => {
 
     const [accountID, setAccountID] = useState('');
-    const [password, setPassword] = useState('');
 
-    const {height} = useWindowDimensions();
-
-    const onSignInPressed = () => {
-        console.warn('Sign In');
+    const onNextPressed = () => {
+        console.warn('Next');
     }
 
-    const onForgotPressed = () => {
-        console.warn('Forgot');
+    const onForgotAccountIDPressed = () => {
+        console.warn('Forgot ID');
     }
 
     return (
         <ScrollView showsHorizontalScrollIndicator={false}>
         <View style={styles.root}>
-            <Image source={Logo} 
-                style={[styles.logo, {height: height * 0.3}]} 
-                resizeMode='contain' 
+
+            <VisibleText
+                text='Portal ED'
+                type='title_light'
+            />
+
+            <VisibleText
+                text='Trouble Signing In?'
+                type='title_bold'
             />
 
             <FieldInput 
@@ -32,24 +36,17 @@ const SignInScreen = () => {
                 value={accountID} 
                 setValue={setAccountID}/>
 
-            <FieldInput 
-                placeholder='Password' 
-                value={password} 
-                setValue={setPassword}
-                secureTextEntry
-                />
-
-<SignInButton 
-                text='Sign In' 
-                onPress={onSignInPressed}
+            <SignInButton 
+                text='Next' 
+                onPress={onNextPressed}
                 fieldType='blue_button'
                 textType='button_white_bold'
                 />
 
             <SignInButton 
-                text='Forgot Account ID or password?' 
-                onPress={onForgotPressed}
-                type='tertiary'
+                text="I don't know my Account ID"
+                onPress={onForgotAccountIDPressed}
+                fieldType='tertiary'
                 textType='link'
                 />
 
@@ -61,15 +58,8 @@ const SignInScreen = () => {
 const styles = StyleSheet.create({
     root: {
         alignItems: 'center',
-        paddingVertical: 100,
-    },
-
-    logo: {
-        width: '70%',
-        maxWidth: 300,
-        height: 100, 
-        maxHeight: 300,
-    },
+        paddingVertical: '60%',
+    }
 });
 
-export default SignInScreen
+export default ForgotPasswordScreen
