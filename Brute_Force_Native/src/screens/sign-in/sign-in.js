@@ -3,6 +3,7 @@ import { View, Text , Image, StyleSheet, useWindowDimensions, ScrollView} from '
 import Logo from '../../../assets/TransparentPELogo.png';
 import FieldInput from '../../components/field-inputs/field-input';
 import SignInButton from '../../components/sign-in-button/sign-in-button';
+import { useNavigation } from '@react-navigation/native';
 
 const SignInScreen = () => {
 
@@ -10,13 +11,16 @@ const SignInScreen = () => {
     const [password, setPassword] = useState('');
 
     const {height} = useWindowDimensions();
+    const navigation = useNavigation();
 
     const onSignInPressed = () => {
-        console.warn('Sign In');
+        // validate user
+
+        navigation.navigate('ParentView')
     }
 
     const onForgotPressed = () => {
-        console.warn('Forgot');
+        navigation.navigate('ForgotPassword')
     }
 
     return (
@@ -38,8 +42,8 @@ const SignInScreen = () => {
                 setValue={setPassword}
                 secureTextEntry
                 />
-
-<SignInButton 
+        
+            <SignInButton 
                 text='Sign In' 
                 onPress={onSignInPressed}
                 fieldType='blue_button'
@@ -61,6 +65,7 @@ const SignInScreen = () => {
 const styles = StyleSheet.create({
     root: {
         alignItems: 'center',
+        backgroundColor: 'white',
         paddingVertical: 100,
     },
 

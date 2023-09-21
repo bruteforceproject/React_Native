@@ -1,16 +1,17 @@
 import React , {useState} from 'react';
-import { View, Text , Image, StyleSheet, useWindowDimensions, ScrollView} from 'react-native';
-import Logo from '../../../assets/TransparentPELogo.png';
+import { View, StyleSheet, ScrollView} from 'react-native';
 import FieldInput from '../../components/field-inputs/field-input';
 import SignInButton from '../../components/sign-in-button/sign-in-button';
 import VisibleText from '../../components/text/text';
+import { useNavigation } from '@react-navigation/native';
 
 const ForgotPasswordScreen = () => {
 
     const [accountID, setAccountID] = useState('');
+    const navigation = useNavigation();
 
     const onNextPressed = () => {
-        console.warn('Next');
+        navigation.navigate('PhoneNumberConfirmation')
     }
 
     const onForgotAccountIDPressed = () => {
@@ -59,6 +60,7 @@ const styles = StyleSheet.create({
     root: {
         alignItems: 'center',
         paddingVertical: '60%',
+        backgroundColor: 'white'
     }
 });
 

@@ -3,17 +3,19 @@ import { View, Text , Image, StyleSheet, useWindowDimensions, ScrollView} from '
 import FieldInput from '../../components/field-inputs/field-input';
 import SignInButton from '../../components/sign-in-button/sign-in-button';
 import VisibleText from '../../components/text/text';
+import { useNavigation } from '@react-navigation/native';
 
 const PhoneNumberConfirmationScreen = () => {
 
     const [phoneNumber, setPhoneNumber] = useState('');
+    const navigation = useNavigation();
 
     const onNextPressed = () => {
-        console.warn('Next');
+        
     }
 
     const onBackPressed = () => {
-        console.warn('Forgot ID');
+        navigation.navigate('ForgotPassword')
     }
 
     return (
@@ -63,6 +65,7 @@ const styles = StyleSheet.create({
     root: {
         alignItems: 'center',
         paddingVertical: '60%',
+        backgroundColor: 'white'
     }
 });
 
