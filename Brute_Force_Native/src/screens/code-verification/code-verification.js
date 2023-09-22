@@ -5,17 +5,17 @@ import SignInButton from '../../components/sign-in-button/sign-in-button';
 import VisibleText from '../../components/text/text';
 import { useNavigation } from '@react-navigation/native';
 
-const ForgotPasswordScreen = () => {
+const CodeVerificationScreen = () => {
 
-    const [accountID, setAccountID] = useState('');
+    const [code, setCode] = useState('');
     const navigation = useNavigation();
 
     const onNextPressed = () => {
-        navigation.navigate('PhoneNumberConfirmation')
+        navigation.navigate('ResetPassword')
     }
 
-    const onForgotAccountIDPressed = () => {
-        navigation.navigate('FindAccount')
+    const onBackPressed = () => {
+        navigation.navigate('ForgotPassword')
     }
 
     return (
@@ -28,14 +28,14 @@ const ForgotPasswordScreen = () => {
             />
 
             <VisibleText
-                text='Trouble Signing In?'
+                text='Enter the 4 digit code below'
                 type='title_bold'
             />
 
             <FieldInput 
-                placeholder='Account ID' 
-                value={accountID} 
-                setValue={setAccountID}/>
+                placeholder='Code' 
+                value={code} 
+                setValue={setCode}/>
 
             <SignInButton 
                 text='Next' 
@@ -45,10 +45,10 @@ const ForgotPasswordScreen = () => {
                 />
 
             <SignInButton 
-                text="I don't know my Account ID"
-                onPress={onForgotAccountIDPressed}
-                fieldType='tertiary'
-                textType='link'
+                text='Back' 
+                onPress={onBackPressed}
+                fieldType='blue_button'
+                textType='button_white_bold'
                 />
 
         </View>
@@ -64,4 +64,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ForgotPasswordScreen
+export default CodeVerificationScreen

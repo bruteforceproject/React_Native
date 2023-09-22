@@ -5,17 +5,13 @@ import SignInButton from '../../components/sign-in-button/sign-in-button';
 import VisibleText from '../../components/text/text';
 import { useNavigation } from '@react-navigation/native';
 
-const ForgotPasswordScreen = () => {
+const ResetPasswordScreen = () => {
 
-    const [accountID, setAccountID] = useState('');
+    const [password, setPassword] = useState('');
     const navigation = useNavigation();
 
-    const onNextPressed = () => {
-        navigation.navigate('PhoneNumberConfirmation')
-    }
-
-    const onForgotAccountIDPressed = () => {
-        navigation.navigate('FindAccount')
+    const onFinish = () => {
+        navigation.navigate('ParentView')
     }
 
     return (
@@ -28,27 +24,20 @@ const ForgotPasswordScreen = () => {
             />
 
             <VisibleText
-                text='Trouble Signing In?'
+                text='Fill in your new password'
                 type='title_bold'
             />
 
             <FieldInput 
-                placeholder='Account ID' 
-                value={accountID} 
-                setValue={setAccountID}/>
+                placeholder='New password' 
+                value={password} 
+                setValue={setPassword}/>
 
             <SignInButton 
-                text='Next' 
-                onPress={onNextPressed}
+                text='Finish' 
+                onPress={onFinish}
                 fieldType='blue_button'
                 textType='button_white_bold'
-                />
-
-            <SignInButton 
-                text="I don't know my Account ID"
-                onPress={onForgotAccountIDPressed}
-                fieldType='tertiary'
-                textType='link'
                 />
 
         </View>
@@ -64,4 +53,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ForgotPasswordScreen
+export default ResetPasswordScreen

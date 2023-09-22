@@ -11,7 +11,7 @@ const PhoneNumberConfirmationScreen = () => {
     const navigation = useNavigation();
 
     const onNextPressed = () => {
-        
+        navigation.navigate('CodeVerification')
     }
 
     const onBackPressed = () => {
@@ -40,7 +40,9 @@ const PhoneNumberConfirmationScreen = () => {
             <FieldInput 
                 placeholder='Phone Number' 
                 value={phoneNumber} 
-                setValue={setPhoneNumber}/>
+                setValue={setPhoneNumber}
+                keyboardType={'number-pad'}    
+                />
 
             <SignInButton 
                 text='Next' 

@@ -5,17 +5,16 @@ import SignInButton from '../../components/sign-in-button/sign-in-button';
 import VisibleText from '../../components/text/text';
 import { useNavigation } from '@react-navigation/native';
 
-const ForgotPasswordScreen = () => {
+const FindAccountScreen = () => {
 
-    const [accountID, setAccountID] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+
     const navigation = useNavigation();
 
     const onNextPressed = () => {
-        navigation.navigate('PhoneNumberConfirmation')
-    }
-
-    const onForgotAccountIDPressed = () => {
-        navigation.navigate('FindAccount')
+        navigation.navigate('AccountFound')
     }
 
     return (
@@ -28,27 +27,30 @@ const ForgotPasswordScreen = () => {
             />
 
             <VisibleText
-                text='Trouble Signing In?'
+                text='Fill the information below to find your Account ID'
                 type='title_bold'
             />
 
             <FieldInput 
-                placeholder='Account ID' 
-                value={accountID} 
-                setValue={setAccountID}/>
+                placeholder='first name' 
+                value={firstName} 
+                setValue={setFirstName}/>
 
-            <SignInButton 
+            <FieldInput 
+                placeholder='last name' 
+                value={lastName} 
+                setValue={setLastName}/>
+
+            <FieldInput 
+                placeholder='email address' 
+                value={email} 
+                setValue={setEmail}/>
+
+            <SignInButton
                 text='Next' 
                 onPress={onNextPressed}
                 fieldType='blue_button'
                 textType='button_white_bold'
-                />
-
-            <SignInButton 
-                text="I don't know my Account ID"
-                onPress={onForgotAccountIDPressed}
-                fieldType='tertiary'
-                textType='link'
                 />
 
         </View>
@@ -64,4 +66,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ForgotPasswordScreen
+export default FindAccountScreen
