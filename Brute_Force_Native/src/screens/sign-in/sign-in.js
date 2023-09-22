@@ -14,8 +14,6 @@ const SignInScreen = () => {
     const navigation = useNavigation();
 
     const onSignInPressed = () => {
-        // validate user
-
         navigation.navigate('ParentView')
     }
 
