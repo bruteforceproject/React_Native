@@ -15,6 +15,10 @@ const ParentView = ({ navigation }) => {
   const navigateToStudentOverview = () => {
     navigation.navigate('StudentOverview');
   }
+
+  const navigateToAcknowledgeView = () => {
+    navigation.navigate('AcknowledgeView');
+  }
   
   
   const getButtonStyle = (text, id) => {
@@ -37,7 +41,7 @@ const ParentView = ({ navigation }) => {
       <Text style={styles.GuardianName}>Parent Name</Text>
 
       <TouchableOpacity style={[styles.buttonContainer, getButtonStyle('Student Name', 'textLength')]}
-                        onPress={navigateToStudentOverview}> 
+                        onPress={navigateToAcknowledgeView}> 
         <View style={styles.buttonContent}>
           <Text numberOfLines={1} style={styles.studentName}>Student Name</Text>
           <Text style={styles.alertText}>2 Unacknowledged Alerts!</Text>

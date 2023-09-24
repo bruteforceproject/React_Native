@@ -11,6 +11,7 @@ import CodeVerificationScreen from "../screens/code-verification/code-verificati
 import ResetPasswordScreen from "../screens/reset-password/reset-password";
 import ParentView from '../../components/parentView'; // This should match what you've exported
 import StudentOverview from '../../components/studentOverview';
+import AcknowledgeView from "../../components/acknowledgeView";
 
 
 const Stack = createStackNavigator();
@@ -28,6 +29,7 @@ const Navigation = () => {
                 <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
                 <Stack.Screen name="ParentView" component={ParentView} />
                 <Stack.Screen name="StudentOverview" component={StudentOverview} />
+                <Stack.Screen name="AcknowledgeView" component={AcknowledgeView} />
             </Stack.Navigator>
         </NavigationContainer>
     )
