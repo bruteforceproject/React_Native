@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable} from 'react-native';
 import VisibleText from '../text/text';
 
-const SignInButton = ({ onPress, text, textType, fieldType='blue'}) => {
+const SignInButton = ({ onPress, text, textType, fieldType}) => {
     return (
         <Pressable 
             onPress={onPress} 
@@ -26,12 +26,15 @@ const styles =  StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 10,
         marginVertical: 10,
-    },
-    field_blue_button: {
         backgroundColor: '#3B71F3',
     },
     field_tertiary: {
-        
+        backgroundColor: 'transparent',
+    },
+    field_row: {
+        margin: 25,
+        marginTop: 10,
+        width: '20%',
     }
 });
 

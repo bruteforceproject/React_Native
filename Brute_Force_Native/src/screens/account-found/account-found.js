@@ -13,7 +13,6 @@ const AccountFoundScreen = () => {
     }
 
     return (
-        <ScrollView showsHorizontalScrollIndicator={false}>
         <View style={styles.root}>
 
             <VisibleText
@@ -35,20 +34,19 @@ const AccountFoundScreen = () => {
                 text='Back to Sign In' 
                 onPress={onBackToSignIn}
                 fieldType='blue_button'
-                textType='button_white_bold'
+                textType='button_white_bold' 
                 />
-
         </View>
-        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     root: {
+        flex:1,
         alignItems: 'center',
-        paddingVertical: '60%',
-        backgroundColor: 'white'
-    }
+        backgroundColor: 'white',
+        paddingVertical: '50%',
+    },
 });
 
 export default AccountFoundScreen

@@ -1,4 +1,3 @@
-//testing purposes
 const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
@@ -32,8 +31,8 @@ async function startServer() {
   } catch (error) {
     console.error("MongoDB connection error:", error);
   } finally {
-    //await client.close();
+
   }
 }
-// Call the startServer function to start the server
+
 startServer();

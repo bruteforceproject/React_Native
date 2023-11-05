@@ -19,7 +19,6 @@ const PhoneNumberConfirmationScreen = () => {
     }
 
     return (
-        <ScrollView showsHorizontalScrollIndicator={false}>
         <View style={styles.root}>
 
             <VisibleText
@@ -44,30 +43,36 @@ const PhoneNumberConfirmationScreen = () => {
                 keyboardType={'number-pad'}    
                 />
 
-            <SignInButton 
-                text='Next' 
-                onPress={onNextPressed}
-                fieldType='blue_button'
-                textType='button_white_bold'
-                />
+            <View style={styles.row}>
 
-            <SignInButton 
-                text='Back' 
-                onPress={onBackPressed}
-                fieldType='blue_button'
-                textType='button_white_bold'
-                />
+                <SignInButton 
+                    text='Back' 
+                    onPress={onBackPressed}
+                    fieldType='row'
+                    textType='button_white_bold'
+                    />
 
+                <SignInButton 
+                    text='Next' 
+                    onPress={onNextPressed}
+                    fieldType='row'
+                    textType='button_white_bold'
+                    />
+            </View>
         </View>
-        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     root: {
+        flex:1,
         alignItems: 'center',
-        paddingVertical: '60%',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        paddingVertical: '50%',
+    },
+
+    row: {
+        flexDirection: 'row'
     }
 });
 

@@ -10,6 +10,9 @@ const ForgotPasswordScreen = () => {
     const [accountID, setAccountID] = useState('');
     const navigation = useNavigation();
 
+    const onBackPressed = () => {
+        navigation.navigate('SignIn')
+    }
     const onNextPressed = () => {
         navigation.navigate('PhoneNumberConfirmation')
     }
@@ -19,7 +22,6 @@ const ForgotPasswordScreen = () => {
     }
 
     return (
-        <ScrollView showsHorizontalScrollIndicator={false}>
         <View style={styles.root}>
 
             <VisibleText
@@ -32,35 +34,53 @@ const ForgotPasswordScreen = () => {
                 type='title_bold'
             />
 
+            <VisibleText
+                text='Enter your email'
+                type='subtext'
+            />
+
             <FieldInput 
-                placeholder='Account ID' 
+                placeholder='Email' 
                 value={accountID} 
                 setValue={setAccountID}/>
 
-            <SignInButton 
-                text='Next' 
-                onPress={onNextPressed}
-                fieldType='blue_button'
-                textType='button_white_bold'
-                />
+            
+            <View style={styles.row}>
+                <SignInButton 
+                    text='Back' 
+                    onPress={onBackPressed}
+                    fieldType='row'
+                    textType='button_white_bold'
+                    />
+
+                <SignInButton 
+                    text='Next' 
+                    onPress={onNextPressed}
+                    fieldType='row'
+                    textType='button_white_bold'
+                    />
+            </View>
 
             <SignInButton 
-                text="I don't know my Account ID"
+                text="I don't know my email"
                 onPress={onForgotAccountIDPressed}
                 fieldType='tertiary'
                 textType='link'
                 />
-
         </View>
-        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     root: {
+        flex:1,
         alignItems: 'center',
-        paddingVertical: '60%',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        paddingVertical: '50%',
+    },
+
+    row: {
+        flexDirection: 'row'
     }
 });
 

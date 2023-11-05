@@ -1,7 +1,8 @@
 import React , {useState} from 'react';
-import { View, Text , Image, StyleSheet, useWindowDimensions, ScrollView} from 'react-native';
-import Logo from '../../../assets/TransparentPELogo.png';
+import { View, Image, StyleSheet, useWindowDimensions} from 'react-native';
+import Logo from '../../../assets/logo1.png';
 import FieldInput from '../../components/field-inputs/field-input';
+import VisibleText from '../../components/text/text';
 import SignInButton from '../../components/sign-in-button/sign-in-button';
 import { useNavigation } from '@react-navigation/native';
 
@@ -22,15 +23,25 @@ const SignInScreen = () => {
     }
 
     return (
-        <ScrollView showsHorizontalScrollIndicator={false}>
+     
         <View style={styles.root}>
             <Image source={Logo} 
-                style={[styles.logo, {height: height * 0.3}]} 
+                style={styles.logo} 
                 resizeMode='contain' 
             />
 
+            <VisibleText
+                text='Portal ED'
+                type='title_bold'
+            />
+
+            <VisibleText
+                text='Sign in to your Portal ED account'
+                type='subtext'
+            />
+
             <FieldInput 
-                placeholder='Account ID' 
+                placeholder='Email' 
                 value={accountID} 
                 setValue={setAccountID}/>
 
@@ -49,27 +60,28 @@ const SignInScreen = () => {
                 />
 
             <SignInButton 
-                text='Forgot Account ID or password?' 
+                text='Forgot email or password?' 
                 onPress={onForgotPressed}
                 fieldType='tertiary'
                 textType='link'
                 />
         </View>
-        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     root: {
+        flex:1,
         alignItems: 'center',
         backgroundColor: 'white',
-        paddingVertical: 100,
+        paddingVertical: '25%',
     },
 
     logo: {
         width: '70%',
         maxWidth: 300,
-        height: 100, 
+        height: 100,
+        marginBottom: 50, 
         maxHeight: 300,
     },
 });

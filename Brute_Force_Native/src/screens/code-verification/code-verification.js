@@ -9,24 +9,16 @@ const CodeVerificationScreen = () => {
 
     const [code, setCode] = useState('');
     const navigation = useNavigation();
-    const inputRefs = useRef<Array<TextInput>>([])
 
     const onNextPressed = () => {
-        //navigation.navigate('ResetPassword')
+        navigation.navigate('ResetPassword')
     }
 
     const onBackPressed = () => {
-        //navigation.navigate('ForgotPassword')
-    }
-
-    const onCodeInput = (text, index) => {
-        if (text.maxLength !==0) { 
-            return inputRefs.current[index + 1].focus()
-        }
+        navigation.navigate('ForgotPassword')
     }
 
     return (
-        <ScrollView showsHorizontalScrollIndicator={false}>
         <View style={styles.root}>
 
             <VisibleText
@@ -39,68 +31,42 @@ const CodeVerificationScreen = () => {
                 type='title_bold'
             />
 
-            <View style={styles.container}>
-                {[...new Array(4)].map((index) => (
-                    <TextInput
-                        ref={ref => {
-                            if (ref && !inputRefs.current.includes(ref)) {
-                                inputRefs.current = [...inputRefs.current, ref]
-                            }
-                        }}
-                        key={index}
-                        style={styles.input}
-                        maxLength={1}
-                        contextMenuHidden
-                        selectTextOnFocus
-                        editable={true}
-                        keyboardType='decimal-pad'
-                        onChangeText={text => onCodeInput(text, index)}
+            <FieldInput 
+                placeholder='Code' 
+                value={code} 
+                setValue={setCode}/>
+
+            <View style={styles.row}>
+
+                <SignInButton 
+                    text='Back' 
+                    onPress={onBackPressed}
+                    fieldType='row'
+                    textType='button_white_bold'
                     />
-                ))}
+
+                <SignInButton 
+                    text='Next' 
+                    onPress={onNextPressed}
+                    fieldType='row'
+                    textType='button_white_bold'
+                    />
             </View>
-
-            <SignInButton 
-                text='Next' 
-                onPress={onNextPressed}
-                fieldType='blue_button'
-                textType='button_white_bold'
-                />
-
-            <SignInButton 
-                text='Back' 
-                onPress={onBackPressed}
-                fieldType='blue_button'
-                textType='button_white_bold'
-                />
-
         </View>
-        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     root: {
+        flex:1,
         alignItems: 'center',
-        paddingVertical: '60%',
-        backgroundColor: 'white'
-    },
-    container: {
-        width: '70%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    input: {
-        fontSize: 24,
-        textAlign: 'center',
-        width: 45,
-        borderColor: '#E8E8E8',
-        borderWidth: 1,
-        borderRadius: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        marginVertical: 10,
-    },
+        backgroundColor: 'white',
+        paddingVertical: '50%',
+    }, 
     
+    row: {
+        flexDirection: 'row'
+    }
 });
 
 export default CodeVerificationScreen

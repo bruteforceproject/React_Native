@@ -11,11 +11,10 @@ const ResetPasswordScreen = () => {
     const navigation = useNavigation();
 
     const onFinish = () => {
-        navigation.navigate('ParentView')
+        navigation.navigate('SignIn')
     }
 
     return (
-        <ScrollView showsHorizontalScrollIndicator={false}>
         <View style={styles.root}>
 
             <VisibleText
@@ -39,18 +38,17 @@ const ResetPasswordScreen = () => {
                 fieldType='blue_button'
                 textType='button_white_bold'
                 />
-
         </View>
-        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     root: {
+        flex:1,
         alignItems: 'center',
-        paddingVertical: '60%',
-        backgroundColor: 'white'
-    }
+        backgroundColor: 'white',
+        paddingVertical: '50%',
+    },
 });
 
 export default ResetPasswordScreen
