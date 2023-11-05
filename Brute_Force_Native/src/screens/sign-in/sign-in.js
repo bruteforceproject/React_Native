@@ -51,10 +51,9 @@ const SignInScreen = () => {
             <SignInButton 
                 text='Forgot Account ID or password?' 
                 onPress={onForgotPressed}
-                type='tertiary'
+                fieldType='tertiary'
                 textType='link'
                 />
-
         </View>
         </ScrollView>
     );
