@@ -12,6 +12,7 @@ import ResetPasswordScreen from "../screens/reset-password/reset-password";
 import ParentView from '../../components/parentView'; // This should match what you've exported
 import StudentOverview from '../../components/studentOverview';
 import AcknowledgeView from "../../components/acknowledgeView";
+import StudentHistory from "../../components/studentHistory";
 
 
 const Stack = createStackNavigator();
@@ -30,6 +31,7 @@ const Navigation = () => {
                 <Stack.Screen name="ParentView" component={ParentView} />
                 <Stack.Screen name="StudentOverview" component={StudentOverview} />
                 <Stack.Screen name="AcknowledgeView" component={AcknowledgeView} />
+                <Stack.Screen name="StudentHistory" component={StudentHistory} />
             </Stack.Navigator>
         </NavigationContainer>
     )

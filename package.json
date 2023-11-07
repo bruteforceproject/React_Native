@@ -2,7 +2,9 @@
   "dependencies": {
     "@react-native-checkbox/checkbox": "^0.5.8",
     "express": "^4.18.2",
-    "mongodb": "^6.1.0"
+    "moment": "^2.29.4",
+    "mongodb": "^6.1.0",
+    "react-native-calendars": "^1.1302.0"
   },
   "scripts": {
     "start-backend": "node databaseConnection/server.js",

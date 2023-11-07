@@ -1,16 +1,26 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
-
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 const goodColor = "#558c3b";
 const okColor = "#f2ca52";
 const badColor = "#f25d50";
 
-function StudentOverview() {
+function StudentOverview({navigation}) {
+
+  //const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.name}>Ariel Manalo</Text>
-        <Text style={styles.id}>ID: 304314933</Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('StudentHistory');
+            }}
+          >
+            <Text style={styles.name}>Ariel Manalo</Text>
+            <Text style={styles.id}>ID: 304314933</Text>
+          </TouchableOpacity>
+        
       </View>
     <ScrollView contentContainerStyle={styles.body}>
       <View style={styles.body}>
@@ -103,6 +113,15 @@ function StudentOverview() {
     
       </View>
       </ScrollView>
+
+      <TouchableOpacity
+        style = {styles.goBackButton}
+        onPress = {() => {
+          navigation.navigate('ParentView');
+        }}
+      >
+        <Text style={styles.goBackButtonText}>Back to Parent View</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -170,6 +189,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 10,
   },
+
+  goBackButton: {
+    backgroundColor: '#007aff',
+    padding: 15,
+    alignItems: 'center',
+    borderRadius: 10,
+    marginTop: 20,
+  },
+
+  goBackButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+
 });
 
 export default StudentOverview;
