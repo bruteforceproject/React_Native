@@ -4,7 +4,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 
 let db;
-const url = `mongodb+srv://Ramez:GHipRjutHHid5CG7@portaledcluster.x6u4jx9.mongodb.net/?retryWrites=true&w=majority`;
+const url = `mongodb+srv://Ramez:U75ZRvMsST1W5IK6@portaledcluster.x6u4jx9.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(url, {
   useNewUrlParser: true,
