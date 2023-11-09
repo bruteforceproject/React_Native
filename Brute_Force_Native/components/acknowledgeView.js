@@ -7,7 +7,8 @@ const AcknowledgeView = ({ navigation }) => {
   const [checkbox2, setCheckbox2] = useState(false);
 
   const navigateToStudentOverview = () => {
-    navigation.navigate('StudentOverview');
+    //navigation.navigate('StudentOverview'); //temporarily changing this to counselorview for testing purposes
+    navigation.navigate('CounselorView');
   }
 
   return (
