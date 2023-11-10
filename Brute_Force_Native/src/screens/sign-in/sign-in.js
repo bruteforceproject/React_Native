@@ -8,14 +8,34 @@ import { useNavigation } from '@react-navigation/native';
 
 const SignInScreen = () => {
 
-    const [accountID, setAccountID] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const {height} = useWindowDimensions();
     const navigation = useNavigation();
 
-    const onSignInPressed = () => {
-        navigation.navigate('ParentView')
+    const onSignInPressed = async () => {
+        try {
+            const response = await fetch("http://localhost:8000/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({email: email, password: password}),
+            });
+        
+            if (response.status === 200) {
+                const data = await response.json();
+                let parentID = data.userId;
+                parentID = parentID.toString();
+                console.log(parentID)
+                navigation.navigate("ParentView", { parentID: parentID })
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            setError("Authentication failed");
+          }
+
     }
 
     const onForgotPressed = () => {
@@ -42,8 +62,8 @@ const SignInScreen = () => {
 
             <FieldInput 
                 placeholder='Email' 
-                value={accountID} 
-                setValue={setAccountID}/>
+                value={email} 
+                setValue={setEmail}/>
 
             <FieldInput 
                 placeholder='Password' 

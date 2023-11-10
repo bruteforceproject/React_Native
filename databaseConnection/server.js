@@ -109,6 +109,29 @@ async function startServer() {
       }
     });
 
+    app.post("/login", async(req, res) => {
+      try {
+        const { email, password } = req.body;
+        const user = await parentCollection.findOne({ email });
+        console.log("hi", user.email)
+        if(user) {
+          console.log("User Exists")
+          if(password === user.password) {
+            return res.status(200).json({
+              message: "Email exists",
+              userId: user.parent_id,
+              userPhone: user.phone,
+              userEmail: user.email,
+            });
+          }
+        }
+    
+      } catch(error){
+        console.log("Error login in the user", error);
+        res.status(500).json({message: "Login error"})
+      }
+    })
+
     // Start the Express server
     const port = process.env.PORT || 8000;
     app.listen(port, () => {

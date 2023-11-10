@@ -2,8 +2,11 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Image } from 'react-native';
+import { useNavigation , useRoute} from '@react-navigation/native';
 
 const ParentView = ({ navigation }) => {
+  const route = useRoute();
+  const parentID = route.params?.parentID;
  
   useEffect(() => {
     navigation.setOptions({
@@ -13,6 +16,7 @@ const ParentView = ({ navigation }) => {
   }, [navigation]);
 
   const navigateToStudentOverview = () => {
+    console.log(parentID)
     navigation.navigate('StudentOverview');
   }
 
