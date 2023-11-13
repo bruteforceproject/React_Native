@@ -16,7 +16,10 @@ const PhoneNumberConfirmationScreen = () => {
     const onNextPressed = async () => {
 
         if(userPhone === phoneNumber){
-            navigation.navigate("CodeVerification", { userPhone: userPhone, userEmail: userEmail })
+            navigation.navigate("CodeVerification", { 
+                userPhone: userPhone, 
+                userEmail: userEmail 
+            })
 
             try {
                 const response = await fetch("http://10.0.0.244:8000/start-verify", {

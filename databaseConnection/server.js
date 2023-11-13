@@ -2,7 +2,7 @@ const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const cors = require("cors"); //need?
-const yessir = require('twilio')("AC5d2f3bf0571fa3e3382f90f069d173a9", "afafd1814dd9de24958a14cfa004c730");
+const yessir = require('twilio')("AC5d2f3bf0571fa3e3382f90f069d173a9", "xxx");
 
 const app = express();
 
@@ -184,6 +184,22 @@ async function startServer() {
                     .verifications
                     .create({to: phone, channel: 'sms'})
                     .then(verification => console.log(verification.status));
+    });
+
+    app.post("/start-check", async (req, res)  => {
+      
+      const { code, phone } = req.body
+
+      console.log(code)
+
+      yessir.verify.v2.services('xxx')
+      .verificationChecks
+      .create({to: phone, code: code})
+      .then(verification_check => {
+        if (verification_check.status === 'approved'){
+          return res.status(200).json();
+        }
+      });
     });
 
     // Start the Express server
