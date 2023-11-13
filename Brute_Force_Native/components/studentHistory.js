@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Button, ScrollView, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Calendar } from 'react-native-calendars';
+import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import moment from 'moment';
 
 const MyCalendar = ({ onRangeChange }) => {

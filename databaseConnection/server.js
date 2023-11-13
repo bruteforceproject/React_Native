@@ -46,6 +46,100 @@ async function startServer() {
       res.status(200).json(student);
     });
 
+
+
+    app.post("/countUnacknowledgedAlerts", async (req, res) => {
+      try {
+        await client.connect();
+        const { studentID } = req.body;
+        console.log("Counting unacknowledged alerts for studentID:", studentID);
+        const count = await academicsCollection.countDocuments({
+          studentID: studentID,
+          acknowledged: false
+        });
+        console.log("Unacknowledged alerts count:", count);
+        res.status(200).json({ count });
+      } catch (error) {
+        console.error("Error counting unacknowledged alerts:", error);
+        res.status(500).json({ message: "Error counting unacknowledged alerts" });
+      }
+    });
+
+
+
+    app.post("/countUnacknowledgedAlerts", async (req, res) => {
+      try {
+        await client.connect();
+        const { studentID } = req.body;
+        const count = await academicsCollection.countDocuments({
+          studentID: studentID,
+          acknowledged: false
+        });
+        res.status(200).json({ count });
+      } catch (error) {
+        console.error("Error counting unacknowledged alerts:", error);
+        res.status(500).json({ message: "Error counting unacknowledged alerts" });
+      }
+    });
+
+    app.post("/countUnacknowledgedBehaviorAlerts", async (req, res) => {
+      try {
+        await client.connect();
+        const { studentID } = req.body;
+        const count = await behaviorCollection.countDocuments({
+          studentID: studentID,
+          acknowledged: false
+        });
+        res.status(200).json({ count });
+      } catch (error) {
+        console.error("Error counting unacknowledged behavior alerts:", error);
+        res.status(500).json({ message: "Error counting unacknowledged behavior alerts" });
+      }
+    });
+
+    app.post("/countUnacknowledgedAttendanceAlerts", async (req, res) => {
+      try {
+        await client.connect();
+        const { studentID } = req.body;
+        const count = await attendanceCollection.countDocuments({
+          studentID: studentID,
+          acknowledged: false
+        });
+        res.status(200).json({ count });
+      } catch (error) {
+        console.error("Error counting unacknowledged attendance alerts:", error);
+        res.status(500).json({ message: "Error counting unacknowledged attendance alerts" });
+      }
+    });
+
+
+    app.post("/getParent", async (req, res) => {
+      await client.connect();
+      console.log("request recieved for " + req.body.parent_id);
+      const parent = await parentCollection.findOne({
+        parent_id: String(req.body.parent_id),
+      });
+      res.status(200).json(parent);
+    });
+
+
+    // app.post("/getParent", async (req, res) => {
+    //   // Connect to MongoDB
+    //   await client.connect();
+    
+    //   // Get parentID from request body
+    //   const { parentID } = req.body;
+    
+    //   // Query the MongoDB database
+    //   const parentData = await parentCollection.findOne({ parent_id: parentID });
+    
+    //   // Send response back to client
+    //   res.status(200).json(parentData);
+    // });
+    
+
+
+
     //end point to get class information
     app.post("/getClass", async (req, res) => {
       await client.connect();
@@ -63,6 +157,12 @@ async function startServer() {
       });
       res.status(200).json(teachers);
     });
+
+
+
+    
+
+    
 
     //end point to get attendance
     app.post("/getAttendance", async (req, res) => {
@@ -106,6 +206,20 @@ async function startServer() {
       } catch(error) {
         console.error("Error fetching behavior data:", error);
         res.status(500).json({message: "Error fetching behavior data"});
+      }
+    });
+
+
+    app.post("/getStudentsByParent", async (req, res) => {
+      console.log("Request received for parent_id:", req.body.parent_id);
+      try {
+        await client.connect();
+        const { parent_id } = req.body;
+        const students = await studentCollection.find({ parent_id: parent_id }).toArray();
+        res.status(200).json(students);
+      } catch (error) {
+        console.error("Error fetching students:", error);
+        res.status(500).json({ message: "Error fetching students" });
       }
     });
 

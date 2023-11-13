@@ -26,10 +26,11 @@ const SignInScreen = () => {
         
             if (response.status === 200) {
                 const data = await response.json();
-                let parentID = data.userId;
-                parentID = parentID.toString();
-                console.log(parentID)
-                navigation.navigate("ParentView", { parentID: parentID })
+                let parent_id = data.userId;
+                parent_id = parent_id.toString();
+                console.log(parent_id)
+                // variable name: variable value
+                navigation.navigate("ParentView", { parent_id: parent_id })
             }
           } catch (error) {
             console.error("Error:", error);
