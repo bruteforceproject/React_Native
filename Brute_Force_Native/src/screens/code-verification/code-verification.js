@@ -14,7 +14,7 @@ const CodeVerificationScreen = () => {
 
     const onNextPressed = async () => {
         try {
-            const response = await fetch("http://10.0.0.244:8000/start-check", {
+            const response = await fetch("http://ip:8000/start-check", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -22,7 +22,7 @@ const PhoneNumberConfirmationScreen = () => {
             })
 
             try {
-                const response = await fetch("http://10.0.0.244:8000/start-verify", {
+                const response = await fetch("http://ip:8000/start-verify", {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",

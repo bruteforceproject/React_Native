@@ -19,7 +19,7 @@ const FindAccountScreen = () => {
 
     const onNextPressed = async () => {
         try {
-            const response = await fetch("http://10.0.0.244:8000/find-email", {
+            const response = await fetch("http://ip:8000/find-email", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
