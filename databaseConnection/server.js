@@ -189,9 +189,7 @@ async function startServer() {
     app.post("/start-check", async (req, res)  => {
       
       const { code, phone } = req.body
-
-      console.log(code)
-
+      
       yessir.verify.v2.services('xxx')
       .verificationChecks
       .create({to: phone, code: code})
