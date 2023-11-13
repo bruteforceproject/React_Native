@@ -241,7 +241,9 @@ function StudentOverview({route,navigation}) {
       <TouchableOpacity
         style = {styles.goBackButton}
         onPress = {() => {
-          navigation.navigate('ParentView');
+          //navigation.navigate('ParentView');
+          console.log(studentData.parent_id); //
+          navigation.navigate('ParentView', { updatedData: studentData.parent_id }); //passing parentID back
         }}
       >
         <Text style={styles.goBackButtonText}>Back to Parent View</Text>

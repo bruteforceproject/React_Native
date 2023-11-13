@@ -164,7 +164,7 @@ const ParentView = ({ route, navigation }) => {
     if (students.length > 0) {
       updateStudentsWithAlertsCount();
     }
-  }, [students]);
+  }, [students.length]);
 
 
   // Example function called when a student button is pressed
@@ -173,7 +173,7 @@ const onStudentPress = (student) => {
   // Check if the alerts count is zero
   if (student.alertsCount === 0) {
     // Navigate to StudentOverview and pass the studentID
-    navigation.navigate('StudentOverview', { studentId: student.studentID });
+    navigation.navigate('StudentOverview', { myData: student });
   } else {
     // Handle the case when there are alerts (if needed)
     console.log("There are alerts for this student.");

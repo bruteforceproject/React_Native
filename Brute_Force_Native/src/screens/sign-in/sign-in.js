@@ -16,7 +16,7 @@ const SignInScreen = () => {
 
     const onSignInPressed = async () => {
         try {
-            const response = await fetch("http://ipaddress:8000/login", {
+            const response = await fetch("http://localhost:8000/login", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
