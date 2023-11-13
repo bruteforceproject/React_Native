@@ -15,7 +15,7 @@ const ResetPasswordScreen = () => {
 
     const onFinish = async () => {
         try {
-            const response = await fetch("http://10.0.0.244:8000/reset-password", {
+            const response = await fetch("http://ip:8000/reset-password", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
