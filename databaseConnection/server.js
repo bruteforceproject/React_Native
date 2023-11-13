@@ -2,6 +2,7 @@ const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const cors = require("cors"); //need?
+const yessir = require('twilio')("AC5d2f3bf0571fa3e3382f90f069d173a9", "afafd1814dd9de24958a14cfa004c730");
 
 const app = express();
 
@@ -113,15 +114,12 @@ async function startServer() {
       try {
         const { email, password } = req.body;
         const user = await parentCollection.findOne({ email });
-        console.log("hi", user.email)
+
         if(user) {
-          console.log("User Exists")
           if(password === user.password) {
             return res.status(200).json({
               message: "Email exists",
-              userId: user.parent_id,
-              userPhone: user.phone,
-              userEmail: user.email,
+              userId: user.parent_id
             });
           }
         }
@@ -131,6 +129,62 @@ async function startServer() {
         res.status(500).json({message: "Login error"})
       }
     })
+
+    app.post("/email-verification", async(req, res) => {
+      try {
+        const { email } = req.body;
+        const user = await parentCollection.findOne({ email });
+
+        if(user) {
+          return res.status(200).json({
+            message: "Email exists",
+            userPhone: user.phone,
+            userEmail: user.email,
+          });
+        }
+
+        else{
+          return res.status(404).json({ message: "Email doesn't exist" });
+        }
+    
+      } catch(error){
+        console.log("Error verifying email", error);
+        res.status(500).json({message: "Login error"})
+      }
+    })
+
+    app.post("/find-email", async(req, res) => {
+      try {
+        const { fname, lname, phone } = req.body;
+        const user = await parentCollection.findOne({ phone });
+
+        if(user) {
+          if (fname == user.fname && lname == user.lname) {
+            return  res.status(200).json({ 
+              message: "Found email", 
+              email: user.email });
+          }
+        }
+
+        else{
+          return res.status(404).json({ message: "Email doesn't exist" });
+        }
+    
+      } catch(error){
+        console.log("Couldn't find email", error);
+        res.status(500).json({message: "Oops"})
+      }
+    })
+
+    app.post("/start-verify", async (req, res)  => {
+      
+      const {phone, email} = req.body
+
+      yessir.verify.v2.services('xxx')
+                    .verifications
+                    .create({to: phone, channel: 'sms'})
+                    .then(verification => console.log(verification.status));
+    });
 
     // Start the Express server
     const port = process.env.PORT || 8000;

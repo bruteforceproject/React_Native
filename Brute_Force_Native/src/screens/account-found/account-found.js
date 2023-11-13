@@ -2,11 +2,13 @@ import React from 'react';
 import { View, StyleSheet, ScrollView} from 'react-native';
 import SignInButton from '../../components/sign-in-button/sign-in-button';
 import VisibleText from '../../components/text/text';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const AccountFoundScreen = () => {
 
     const navigation = useNavigation();
+    const route = useRoute();
+    const email = route.params?.email;
 
     const onBackToSignIn = () => {
         navigation.navigate('SignIn')
@@ -26,7 +28,7 @@ const AccountFoundScreen = () => {
             />
 
             <VisibleText
-                text='Your Account ID is:'
+                text={'Your Account ID is: ' + email}
                 type='text_subtext'
             />
 

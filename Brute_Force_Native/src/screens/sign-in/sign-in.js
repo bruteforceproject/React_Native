@@ -16,7 +16,7 @@ const SignInScreen = () => {
 
     const onSignInPressed = async () => {
         try {
-            const response = await fetch("http://localhost:8000/login", {
+            const response = await fetch("http://10.0.0.244:8000/login", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -33,9 +33,7 @@ const SignInScreen = () => {
             }
           } catch (error) {
             console.error("Error:", error);
-            setError("Authentication failed");
           }
-
     }
 
     const onForgotPressed = () => {
