@@ -3,15 +3,35 @@ import { View, StyleSheet, ScrollView} from 'react-native';
 import FieldInput from '../../components/field-inputs/field-input';
 import SignInButton from '../../components/sign-in-button/sign-in-button';
 import VisibleText from '../../components/text/text';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const ResetPasswordScreen = () => {
+    const navigation = useNavigation();
+    const route = useRoute();
+
+    const {userEmail} = route.params;
 
     const [password, setPassword] = useState('');
-    const navigation = useNavigation();
 
-    const onFinish = () => {
-        navigation.navigate('SignIn')
+    const onFinish = async () => {
+        try {
+            const response = await fetch("http://10.0.0.244:8000/reset-password", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: userEmail,
+                    password: password
+                }),
+            });
+        
+            if (response.status === 200) {
+                navigation.navigate("SignIn")
+            }
+          } catch (error) {
+            console.error("Error:", error);
+          }
     }
 
     return (

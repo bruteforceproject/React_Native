@@ -2,7 +2,7 @@ const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const cors = require("cors"); //need?
-const yessir = require('twilio')("AC5d2f3bf0571fa3e3382f90f069d173a9", "xxx");
+const yessir = require('twilio')("xxxx", "xxxx");
 
 const app = express();
 
@@ -141,12 +141,9 @@ async function startServer() {
             userPhone: user.phone,
             userEmail: user.email,
           });
+        } else {
+            return res.status(404).json({ message: "Email doesn't exist" });
         }
-
-        else{
-          return res.status(404).json({ message: "Email doesn't exist" });
-        }
-    
       } catch(error){
         console.log("Error verifying email", error);
         res.status(500).json({message: "Login error"})
@@ -164,9 +161,7 @@ async function startServer() {
               message: "Found email", 
               email: user.email });
           }
-        }
-
-        else{
+        } else {
           return res.status(404).json({ message: "Email doesn't exist" });
         }
     
@@ -177,28 +172,51 @@ async function startServer() {
     })
 
     app.post("/start-verify", async (req, res)  => {
-      
       const {phone, email} = req.body
 
-      yessir.verify.v2.services('xxx')
-                    .verifications
-                    .create({to: phone, channel: 'sms'})
-                    .then(verification => console.log(verification.status));
+      yessir.verify.v2.services('xxxx')
+        .verifications
+        .create({to: phone, channel: 'sms'})
+        .then(verification => console.log(verification.status));
     });
 
     app.post("/start-check", async (req, res)  => {
-      
       const { code, phone } = req.body
       
-      yessir.verify.v2.services('xxx')
-      .verificationChecks
-      .create({to: phone, code: code})
-      .then(verification_check => {
-        if (verification_check.status === 'approved'){
+      yessir.verify.v2.services('xxxx')
+        .verificationChecks
+        .create({to: phone, code: code})
+        .then(verification_check => {
+          if (verification_check.status === 'approved'){
           return res.status(200).json();
-        }
-      });
+          }
+        });
     });
+
+    app.post("/reset-password", async(req, res) => {
+      const { email, password } = req.body;
+
+      const query = { "name": email };
+      const update = {
+          "$set": {
+            "password": password
+          }
+        };
+
+      const options = { returnNewDocument: true };
+
+      parentCollection.findOneAndUpdate({email}, update, options)
+        .then(updatedDocument => {
+          if(updatedDocument) {
+            console.log(`Successfully updated document: ${updatedDocument}.`)
+            return res.status(200).json();
+          } else {
+            console.log("No document matches the provided query.")
+          }
+          return updatedDocument
+        })
+        .catch(err => console.error(`Failed to find and update document: ${err}`))   
+    })
 
     // Start the Express server
     const port = process.env.PORT || 8000;
