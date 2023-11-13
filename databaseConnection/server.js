@@ -2,7 +2,7 @@ const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const cors = require("cors"); //need?
-//const yessir = require('twilio')("xxxx", "xxxx");
+const yessir = require('twilio')("xx", "xx");
 
 const app = express();
 
@@ -288,7 +288,7 @@ async function startServer() {
     app.post("/start-verify", async (req, res)  => {
       const {phone, email} = req.body
 
-      yessir.verify.v2.services('xxxx')
+      yessir.verify.v2.services('xx')
         .verifications
         .create({to: phone, channel: 'sms'})
         .then(verification => console.log(verification.status));
@@ -297,7 +297,7 @@ async function startServer() {
     app.post("/start-check", async (req, res)  => {
       const { code, phone } = req.body
       
-      yessir.verify.v2.services('xxxx')
+      yessir.verify.v2.services('xx')
         .verificationChecks
         .create({to: phone, code: code})
         .then(verification_check => {
@@ -330,6 +330,30 @@ async function startServer() {
           return updatedDocument
         })
         .catch(err => console.error(`Failed to find and update document: ${err}`))   
+    })
+
+    app.post("/get-alerts", async(req, res) => {
+      try {
+        const { studentID } = req.body;
+        const student = await studentCollection.findOne({ studentID })
+
+        const academicAlerts = await academicsCollection.find({ studentID }).toArray();
+        const behaviourAlerts = await behaviorCollection.find({ studentID }).toArray();
+        const attendanceAlerts = await attendanceCollection.find({ studentID }).toArray();
+
+        if (student) {
+          return res.status(200).json({
+            academicAlerts, 
+            behaviourAlerts, 
+            attendanceAlerts,
+            studentName: student.fname
+          });
+        }
+
+      } catch(error){
+        console.log("Couldn't find email", error);
+        res.status(500).json({message: "Oops"})
+      }
     })
 
     // Start the Express server
