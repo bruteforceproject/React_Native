@@ -3,15 +3,42 @@ import { View, StyleSheet, ScrollView, TextInput} from 'react-native';
 import FieldInput from '../../components/field-inputs/field-input';
 import SignInButton from '../../components/sign-in-button/sign-in-button';
 import VisibleText from '../../components/text/text';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const CodeVerificationScreen = () => {
-
-    const [code, setCode] = useState('');
     const navigation = useNavigation();
+    const route = useRoute();
 
-    const onNextPressed = () => {
-        navigation.navigate('ResetPassword')
+    const {userPhone, userEmail} = route.params;
+    const [code, setCode] = useState('');
+
+    const onNextPressed = async () => {
+        try {
+            const response = await fetch("http://ip:8000/start-check", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    phone: userPhone,
+                    code: code
+                }),
+            });
+      
+            if (response.status === 200) {
+                navigation.navigate('ResetPassword', {
+                    userEmail: userEmail 
+                });
+            } 
+            
+            else if (response.status === 404) {
+              sconsole.log('Wrong code')
+            }
+          } 
+
+          catch (error) {
+            console.error("Error:", error);
+          }
     }
 
     const onBackPressed = () => {

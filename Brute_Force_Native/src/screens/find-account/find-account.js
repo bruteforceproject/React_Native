@@ -9,7 +9,7 @@ const FindAccountScreen = () => {
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [email, setEmail] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
 
     const navigation = useNavigation();
 
@@ -17,8 +17,29 @@ const FindAccountScreen = () => {
         navigation.navigate('ForgotPassword')
     }
 
-    const onNextPressed = () => {
-        navigation.navigate('AccountFound')
+    const onNextPressed = async () => {
+        try {
+            const response = await fetch("http://ip:8000/find-email", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                fname: firstName, 
+                lname: lastName, 
+                phone: phoneNumber}),
+            });
+        
+            if (response.status === 200) {
+                const data = await response.json();
+                let userEmail = data.email;
+                userEmail = userEmail.toString();
+                console.log(userEmail)
+                navigation.navigate("AccountFound", { email: userEmail })
+            }
+          } catch (error) {
+            console.error("Error:", error);
+          }
     }
 
     return (
@@ -37,17 +58,21 @@ const FindAccountScreen = () => {
             <FieldInput 
                 placeholder='first name' 
                 value={firstName} 
-                setValue={setFirstName}/>
+                setValue={setFirstName}
+            />
 
             <FieldInput 
                 placeholder='last name' 
                 value={lastName} 
-                setValue={setLastName}/>
+                setValue={setLastName}
+            />
 
             <FieldInput 
-                placeholder='email address' 
-                value={email} 
-                setValue={setEmail}/>
+                placeholder='phone number' 
+                value={phoneNumber} 
+                setValue={setPhoneNumber}
+                //keyboardType={'number-pad'} 
+            />
 
             <View style={styles.row}>
                 <SignInButton 

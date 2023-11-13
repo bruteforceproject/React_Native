@@ -7,14 +7,34 @@ import { useNavigation } from '@react-navigation/native';
 
 const ForgotPasswordScreen = () => {
 
-    const [accountID, setAccountID] = useState('');
+    const [email, setEmail] = useState('');
     const navigation = useNavigation();
 
     const onBackPressed = () => {
         navigation.navigate('SignIn')
     }
-    const onNextPressed = () => {
-        navigation.navigate('PhoneNumberConfirmation')
+    const onNextPressed = async () => {
+        try {
+            const response = await fetch("http://ip:8000/email-verification", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({email: email}),
+            });
+        
+            if (response.status === 200) {
+                const data = await response.json();
+                let userPhone = data.userPhone;
+                let userEmail = data.userEmail;
+                userEmail = userEmail.toString();
+                console.log(userEmail)
+                console.log(userPhone)
+                navigation.navigate("PhoneNumberConfirmation", { userPhone: userPhone, userEmail: userEmail })
+            }
+          } catch (error) {
+            console.error("Error:", error);
+          }
     }
 
     const onForgotAccountIDPressed = () => {
@@ -41,8 +61,8 @@ const ForgotPasswordScreen = () => {
 
             <FieldInput 
                 placeholder='Email' 
-                value={accountID} 
-                setValue={setAccountID}/>
+                value={email} 
+                setValue={setEmail}/>
 
             
             <View style={styles.row}>
