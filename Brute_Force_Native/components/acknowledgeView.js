@@ -20,7 +20,7 @@ const AcknowledgeView = ({ route }) => {
 
   const fetchUnacknowledgedAttendanceAlerts = async () => {
     try {
-      const response = await fetch('http://192.168.0.19:8000/getUnacknowledgedAttendanceAlerts', {
+      const response = await fetch('http://localhost:8000/getUnacknowledgedAttendanceAlerts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ studentID: studentId })
@@ -48,7 +48,7 @@ const AcknowledgeView = ({ route }) => {
 
   const fetchUnacknowledgedBehaviorAlerts = async () => {
     try {
-      const response = await fetch('http://192.168.0.19:8000/getUnacknowledgedBehaviorAlerts', {
+      const response = await fetch('http://localhost:8000/getUnacknowledgedBehaviorAlerts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ studentID: studentId })
@@ -77,7 +77,7 @@ const AcknowledgeView = ({ route }) => {
 
   const fetchUnacknowledgedAcademicAlerts = async () => {
   try {
-    const response = await fetch('http://192.168.0.19:8000/getUnacknowledgedAcademicAlerts', {
+    const response = await fetch('http://localhost:8000/getUnacknowledgedAcademicAlerts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ studentID: studentId })
@@ -108,7 +108,7 @@ const AcknowledgeView = ({ route }) => {
 
   const fetchAlertDescription = async (alertId) => {
     try {
-      const response = await fetch('http://192.168.0.19:8000/getAlertDescription', {
+      const response = await fetch('http://localhost:8000/getAlertDescription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ alertID: alertId })
@@ -129,7 +129,7 @@ const AcknowledgeView = ({ route }) => {
 
   const fetchClassDetails = async (classId) => {
     try {
-      const response = await fetch('http://192.168.0.19:8000/getClass', {
+      const response = await fetch('http://localhost:8000/getClass', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ class_id: classId })
@@ -149,7 +149,7 @@ const AcknowledgeView = ({ route }) => {
 
   const fetchTeacherDetails = async (teacherId) => {
     try {
-      const response = await fetch('http://192.168.0.19:8000/getTeacher', {
+      const response = await fetch('http://localhost:8000/getTeacher', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ teacher_id: teacherId })
@@ -169,7 +169,7 @@ const AcknowledgeView = ({ route }) => {
 
   const fetchStudentDetails = async () => {
     try {
-      const response = await fetch('http://192.168.0.19:8000/getStudentDetails', {
+      const response = await fetch('http://localhost:8000/getStudentDetails', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ studentID: studentId })
@@ -188,7 +188,7 @@ const AcknowledgeView = ({ route }) => {
 
   const fetchCompleteStudentDetails = async () => {
     try {
-      const response = await fetch('http://192.168.0.19:8000/getCompleteStudentDetails', {
+      const response = await fetch('http://localhost:8000/getCompleteStudentDetails', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ studentID: studentId })
@@ -328,17 +328,17 @@ const AcknowledgeView = ({ route }) => {
     if (allAttendanceChecked && allBehaviorChecked && allAcademicChecked) {
         try {
             // Example of API calls to acknowledge alerts, replace with your actual API calls
-            const AtResponse = await fetch('http://192.168.0.19:8000/acknowledgeAcademicAlerts', {
+            const AtResponse = await fetch('http://localhost:8000/acknowledgeAcademicAlerts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ studentID: studentId })
             });
-            const BeResponse = await fetch('http://192.168.0.19:8000/acknowledgeBehaviorAlerts', {
+            const BeResponse = await fetch('http://localhost:8000/acknowledgeBehaviorAlerts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ studentID: studentId })
             });
-            const AcResponse = await fetch('http://192.168.0.19:8000/acknowledgeAttendanceAlerts', {
+            const AcResponse = await fetch('http://localhost:8000/acknowledgeAttendanceAlerts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ studentID: studentId })

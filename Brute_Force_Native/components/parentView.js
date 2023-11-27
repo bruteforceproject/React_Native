@@ -106,7 +106,7 @@ const ParentView = ({ route, navigation }) => {
 
     const fetchUnacknowledgedAttendanceAlertsCount = async (studentID) => {
       try {
-        const response = await fetch('http://192.168.0.19:8000/countUnacknowledgedAttendanceAlerts', {
+        const response = await fetch('http://localhost:8000/countUnacknowledgedAttendanceAlerts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ studentID })
