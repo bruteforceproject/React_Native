@@ -1,6 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import Logo from '../assets/logo1.png';
+import { useFocusEffect } from '@react-navigation/native'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ScrollView,  Alert, View, Text, Image, Button,TouchableOpacity, StyleSheet } from 'react-native';
 
 const ParentView = ({ route, navigation }) => {
   const { parent_id } = route.params;
@@ -10,7 +13,7 @@ const ParentView = ({ route, navigation }) => {
 
   const fetchUnacknowledgedAlertsCount = async (studentID) => {
     try {
-      const response = await fetch('http://localhost:8000/countUnacknowledgedAlerts', {
+      const response = await fetch('http://192.168.0.19:8000/countUnacknowledgedAlerts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ studentID })
@@ -34,7 +37,7 @@ const ParentView = ({ route, navigation }) => {
 
   const fetchStudents = async () => {
     try {
-      const response = await fetch('http://localhost:8000/getStudentsByParent', {
+      const response = await fetch('http://192.168.0.19:8000/getStudentsByParent', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ parent_id: parent_id }),
@@ -60,7 +63,7 @@ const ParentView = ({ route, navigation }) => {
     // Function to fetch parent details
     const fetchParent = async () => {
       try {
-        const response = await fetch('http://localhost:8000/getParent', {
+        const response = await fetch('http://192.168.0.19:8000/getParent', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ parent_id: parent_id }),
@@ -81,7 +84,7 @@ const ParentView = ({ route, navigation }) => {
 
     const fetchUnacknowledgedBehaviorAlertsCount = async (studentID) => {
       try {
-        const response = await fetch('http://localhost:8000/countUnacknowledgedBehaviorAlerts', {
+        const response = await fetch('http://192.168.0.19:8000/countUnacknowledgedBehaviorAlerts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ studentID })
@@ -103,7 +106,7 @@ const ParentView = ({ route, navigation }) => {
 
     const fetchUnacknowledgedAttendanceAlertsCount = async (studentID) => {
       try {
-        const response = await fetch('http://localhost:8000/countUnacknowledgedAttendanceAlerts', {
+        const response = await fetch('http://192.168.0.19:8000/countUnacknowledgedAttendanceAlerts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ studentID })
@@ -135,26 +138,47 @@ const ParentView = ({ route, navigation }) => {
       setStudents(updatedStudents);
     };
 
-    // const updateStudentsWithAlertsCount = async () => {
-    //   const updatedStudents = await Promise.all(students.map(async (student) => {
-    //     const count = await fetchUnacknowledgedAlertsCount(student.studentID);
-    //     return { ...student, alertsCount: count };
-    //   }));
-    //   setStudents(updatedStudents);
-    // };
+    const fetchCompleteStudentDetails = async () => {
+  try {
+    const response = await fetch('http://192.168.0.19:8000/getCompleteStudentDetails', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentID: studentId })
+    });
 
+    if (response.ok) {
+      const studentDetails = await response.json();
+      // Do something with the full student details
+      // For example, store in state or pass to another component
+    } else {
+      console.error('Failed to fetch complete student details:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error fetching complete student details:', error);
+  }
+};
 
+useFocusEffect(
+  React.useCallback(() => {
+    const fetchData = async () => {
+      await fetchStudents();
+      await fetchParent();
+      if (students.length > 0) {
+        await updateStudentsWithAlertsCount();
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      // Cleanup (if needed)
+    };
+  }, [parent_id])
+);
 
 
   useEffect(() => {
-    // Function to fetch students
-    
-
-    // Function to fetch parent details
-    
-
-    
-
+  
     fetchStudents();
     fetchParent();
   }, [parent_id]);
@@ -164,76 +188,169 @@ const ParentView = ({ route, navigation }) => {
     if (students.length > 0) {
       updateStudentsWithAlertsCount();
     }
-  }, [students]);
+  }, [students.length]);
 
 
-  // Example function called when a student button is pressed
-const onStudentPress = (student) => {
-  console.log("Student button pressed:", student.fname, student.lname, student.studentID);
-  // Check if the alerts count is zero
-  if (student.alertsCount === 0) {
-    // Navigate to StudentOverview and pass the studentID
-    navigation.navigate('StudentOverview', { studentId: student.studentID });
-  } else {
-    // Handle the case when there are alerts (if needed)
-    console.log("There are alerts for this student.");
-  }
-};
+  const handleLogout = () => {
+    Alert.alert(
+      "Log Out",
+      "Are you sure you want to log out?",
+      [
+        {
+          text: "No",
+          onPress: () => console.log("Logout Cancelled"),
+          style: "cancel"
+        },
+        {
+          text: "Yes",
+          onPress: async () => {
+            try {
+              await AsyncStorage.removeItem('@login_token');
+              navigation.navigate('SignIn');
+            } catch (e) {
+              console.error('Logout failed', e);
+            }
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+  
+  const performLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('@login_token');
+      navigation.navigate('SignInScreen');
+    } catch (e) {
+      console.error('Logout failed', e);
+    }
+  };
+
+  
+  
+  
 
 
-  return (
-    <View style={styles.container}>
-      {parent && (
-        <Text style={styles.parentName}>{parent.fname} {parent.lname}</Text>
-      )}
-      {students.map((student, index) => (
-        <View key={index}>
-          <Button
-            title={`${student.fname} ${student.lname} (${student.studentID}) - Alerts: ${student.alertsCount || 0}`}
-            onPress={() => onStudentPress(student)}
-          />
-        </View>
-      ))}
-    </View>
-  );
+  
+  const onStudentPress = async (student) => {
+    console.log("Student button pressed:", student.fname, student.lname, student.studentID);
+  
+    // Update the alert count for the selected student
+    const academicsCount = await fetchUnacknowledgedAlertsCount(student.studentID);
+    const behaviorCount = await fetchUnacknowledgedBehaviorAlertsCount(student.studentID);
+    const attendanceCount = await fetchUnacknowledgedAttendanceAlertsCount(student.studentID);
+    const totalAlertsCount = academicsCount + behaviorCount + attendanceCount;
+  
+    // Check if the updated alerts count is zero
+    if (totalAlertsCount === 0) {
+      // Navigate to StudentOverview and pass the studentID
+      navigation.navigate('StudentOverview', { myData: student });
+    } else {
+      navigation.navigate('AcknowledgeView', { studentId: student.studentID });
+      console.log("There are alerts for this student.");
+    }
+  };
+
+
+return (
+  <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
+    <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+      <Text style={styles.logoutButtonText}>Logout</Text>
+    </TouchableOpacity>
+
+    <Image source={Logo} style={styles.logo} resizeMode='contain' />
+    
+    {parent && (
+      <Text style={styles.parentName}>{parent.fname} {parent.lname}</Text>
+    )}
+
+    {students.map((student, index) => (
+      <TouchableOpacity
+        key={index}
+        style={styles.button}
+        onPress={() => onStudentPress(student)}
+      >
+        <Text style={styles.buttonText}>
+          {student.fname} {student.lname} ({student.studentID})
+        </Text>
+        <Text style={styles.alertCount}>
+          Alerts: {student.alertsCount || 0}
+        </Text>
+      </TouchableOpacity>
+    ))}
+  </ScrollView>
+);
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 50, // Adds padding at the top of the container
-    alignItems: 'center', // Centers content horizontally
-    // Remove justifyContent if you do not want vertical centering
+  scrollView: {
+    flex: 1,
   },
-  parentName: {
-    fontSize: 40, // larger font size
-    textAlign: 'center', // centers text horizontally
-    marginVertical: 20, // adds space above and below the text
-    // Add more styling as needed
+  contentContainer: {
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 50,
   },
-  button: {
-    width: 200, // Fixed width
-    height: 100, // Fixed height
-    justifyContent: 'center', // Center items vertically inside the button
-    alignItems: 'center', // Center items horizontally inside the button
-    backgroundColor: '#007AFF', // Button color
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10, // Add space between buttons
-  },
-  buttonText: {
-    fontSize: 18,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  studentId: {
-    fontSize: 16,
-    color: 'white',
-  },
-  alertCount: {
-    fontSize: 14,
-    color: 'white',
-    marginTop: 5, // Space between ID and alert count
-  },
-});
 
+container: {
+  flex: 1,
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  paddingTop: 50,
+},
+parentName: {
+  fontSize: 40,
+  textAlign: 'center',
+  marginTop: 30,
+  marginBottom: 20,
+},
+button: {
+  fontSize: 25,
+  width: 300, // Fixed width for all buttons
+  minHeight: 100, // Minimum height for all buttons
+  backgroundColor: '#007AFF', // Button color
+  justifyContent: 'center', // Center content vertically
+  alignItems: 'center', // Center content horizontally
+  padding: 20,
+  borderRadius: 5,
+  marginVertical: 10, // Space between buttons
+},
+buttonText: {
+  fontSize: 18,
+  color: 'white',
+  fontWeight: 'bold',
+},
+alertCount: {
+  fontSize: 16,
+  color: 'white',
+  marginTop: 5, // Space between name/ID and alert count
+},
+logo: {
+  width: '70%',
+  maxWidth: 300,
+  height: 100,
+  marginBottom: 50, 
+  maxHeight: 300,
+  marginTop: 50, 
+},
+container: {
+  flex: 1,
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  paddingTop: 50,
+},
+logoutButton: {
+  position: 'absolute',
+  top: 10,
+  right: 10,
+  padding: 10,
+  backgroundColor: 'red',
+  borderRadius: 5,
+  marginTop: 30,
+},
+logoutButtonText: {
+  color: 'white',
+  fontWeight: 'bold',
+},
+});
 export default ParentView;

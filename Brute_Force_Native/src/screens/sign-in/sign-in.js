@@ -5,6 +5,8 @@ import FieldInput from '../../components/field-inputs/field-input';
 import VisibleText from '../../components/text/text';
 import SignInButton from '../../components/sign-in-button/sign-in-button';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const SignInScreen = () => {
 
@@ -16,7 +18,7 @@ const SignInScreen = () => {
 
     const onSignInPressed = async () => {
         try {
-            const response = await fetch("http://ipaddress:8000/login", {
+            const response = await fetch("http://192.168.0.19:8000/login", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -30,6 +32,8 @@ const SignInScreen = () => {
                 parent_id = parent_id.toString();
                 console.log(parent_id)
                 // variable name: variable value
+
+                await AsyncStorage.setItem('@login_token', parent_id);
                 navigation.navigate("ParentView", { parent_id: parent_id })
             }
           } catch (error) {

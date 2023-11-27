@@ -2,7 +2,7 @@ const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const cors = require("cors"); //need?
-const yessir = require('twilio')("xxxx", "xxxx");
+//const yessir = require('twilio')("xxxx", "xxxx");
 
 const app = express();
 
@@ -36,6 +36,7 @@ async function startServer() {
     const attendanceCollection = database.collection("Attendance");
     const academicsCollection = database.collection("Academics");
     const behaviorCollection = database.collection("Behavior");
+    const alertCollection = database.collection("Alert")
 
     // this is an end point to get all the users from /getStudents
     app.post("/getStudents", async (req, res) => {
@@ -65,6 +66,104 @@ async function startServer() {
         res.status(500).json({ message: "Error counting unacknowledged alerts" });
       }
     });
+
+    const fetchClassDetails = async (classId) => {
+      try {
+        const response = await fetch('http://192.168.0.19:8000/getClass', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ class_id: classId })
+        });
+        if (response.ok) {
+          const data = await response.json();
+          return data;
+        } else {
+          console.error('Failed to fetch class details:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching class details:', error);
+      }
+      return null;
+    };
+
+    app.post("/getAlertDescription", async (req, res) => {
+      try {
+        await client.connect();
+        const { alertID } = req.body;
+        
+        // Use the alertCollection to find the alert by its ID
+        const alertData = await alertCollection.findOne({ alertID: alertID });
+        
+        if (alertData) {
+          // Send back the alert description if the alert is found
+          res.status(200).json({ alertDesc: alertData.alertDesc });
+        } else {
+          // Handle cases where the alert is not found
+          res.status(404).json({ message: "Alert description not found" });
+        }
+      } catch (error) {
+        console.error("Error fetching alert description:", error);
+        res.status(500).json({ message: "Error fetching alert description" });
+      }
+    });
+    
+
+    app.post("/getUnacknowledgedAcademicAlerts", async (req, res) => {
+      try {
+        await client.connect();
+        const { studentID } = req.body;
+        
+        // Query the 'Academics' collection for unacknowledged alerts for the given studentID
+        const academicAlerts = await academicsCollection.find({
+          studentID: studentID,
+          acknowledged: false // assuming there is an 'acknowledged' field to check if the alert is acknowledged
+        }).toArray();
+    
+        if (academicAlerts.length > 0) {
+          res.status(200).json(academicAlerts);
+        } else {
+          res.status(404).json({ message: "No unacknowledged academic alerts found" });
+        }
+      } catch (error) {
+        console.error("Error fetching unacknowledged academic alerts:", error);
+        res.status(500).json({ message: "Error fetching unacknowledged academic alerts" });
+      }
+    });
+
+
+
+    app.post("/getUnacknowledgedAttendanceAlerts", async (req, res) => {
+      try {
+        await client.connect();
+        const { studentID } = req.body;
+        const alerts = await attendanceCollection.find({
+          studentID: studentID,
+          acknowledged: false
+        }).toArray();
+        res.status(200).json(alerts);
+      } catch (error) {
+        console.error("Error fetching unacknowledged attendance alerts:", error);
+        res.status(500).json({ message: "Error fetching unacknowledged attendance alerts" });
+      }
+    });
+
+
+    app.post("/getUnacknowledgedBehaviorAlerts", async (req, res) => {
+      try {
+        await client.connect();
+        const { studentID } = req.body;
+        const behaviorAlerts = await behaviorCollection.find({
+          studentID: studentID,
+          acknowledged: false
+        }).toArray();
+    
+        res.status(200).json(behaviorAlerts);
+      } catch (error) {
+        console.error("Error fetching unacknowledged behavior alerts:", error);
+        res.status(500).json({ message: "Error fetching unacknowledged behavior alerts" });
+      }
+    });
+    
 
 
 
@@ -113,6 +212,89 @@ async function startServer() {
       }
     });
 
+    app.post("/acknowledgeAcademicAlerts", async (req, res) => {
+      try {
+          await client.connect();
+          const { studentID } = req.body;
+  
+          // Update the 'acknowledged' field to true for all documents
+          // where 'studentID' matches and 'acknowledged' is false
+          const result = await academicsCollection.updateMany(
+              { studentID: studentID, acknowledged: false },
+              { $set: { acknowledged: true } }
+          );
+  
+          if (result.modifiedCount > 0) {
+              console.log(`Successfully acknowledged ${result.modifiedCount} academic alerts.`);
+              res.status(200).json({ message: "Academic alerts acknowledged successfully" });
+          } else {
+              // Handle case where no documents were updated
+              console.log("No academic alerts to acknowledge.");
+              res.status(200).json({ message: "No academic alerts to acknowledge" });
+          }
+      } catch (error) {
+          console.error("Failed to acknowledge academic alerts:", error);
+          res.status(500).json({ message: "Failed to acknowledge academic alerts" });
+      }
+  });
+
+  app.post("/acknowledgeBehaviorAlerts", async (req, res) => {
+    try {
+        await client.connect();
+        const { studentID } = req.body;
+
+        // Update the 'acknowledged' field to true for all documents
+        // where 'studentID' matches and 'acknowledged' is false
+        const result = await behaviorCollection.updateMany(
+            { studentID: studentID, acknowledged: false },
+            { $set: { acknowledged: true } }
+        );
+
+        if (result.modifiedCount > 0) {
+            console.log(`Successfully acknowledged ${result.modifiedCount} behavior alerts.`);
+            res.status(200).json({ message: "Behavior alerts acknowledged successfully" });
+        } else {
+            // Handle case where no documents were updated
+            console.log("No behavior alerts to acknowledge.");
+            res.status(200).json({ message: "No behavior alerts to acknowledge" });
+        }
+    } catch (error) {
+        console.error("Failed to acknowledge behavior alerts:", error);
+        res.status(500).json({ message: "Failed to acknowledge behavior alerts" });
+    }
+});
+
+app.post("/acknowledgeAttendanceAlerts", async (req, res) => {
+  try {
+      await client.connect();
+      const { studentID } = req.body;
+
+      // Update the 'acknowledged' field to true for all documents
+      // where 'studentID' matches and 'acknowledged' is false
+      const result = await attendanceCollection.updateMany(
+          { studentID: studentID, acknowledged: false },
+          { $set: { acknowledged: true } }
+      );
+
+      if (result.modifiedCount > 0) {
+          console.log(`Successfully acknowledged ${result.modifiedCount} attendance alerts.`);
+          res.status(200).json({ message: "Attendance alerts acknowledged successfully" });
+      } else {
+          // Handle case where no documents were updated
+          console.log("No attendance alerts to acknowledge.");
+          res.status(200).json({ message: "No attendance alerts to acknowledge" });
+      }
+  } catch (error) {
+      console.error("Failed to acknowledge attendance alerts:", error);
+      res.status(500).json({ message: "Failed to acknowledge attendance alerts" });
+  }
+});
+
+    
+
+   
+    
+
 
     app.post("/getParent", async (req, res) => {
       await client.connect();
@@ -123,25 +305,28 @@ async function startServer() {
       res.status(200).json(parent);
     });
 
-
-    // app.post("/getParent", async (req, res) => {
-    //   // Connect to MongoDB
-    //   await client.connect();
+    app.post("/getParentIdByStudentId", async (req, res) => {
+      try {
+        await client.connect();
+        const { studentID } = req.body;
     
-    //   // Get parentID from request body
-    //   const { parentID } = req.body;
+        // Query the 'Student' collection for the given studentID
+        const student = await studentCollection.findOne({ studentID: studentID });
     
-    //   // Query the MongoDB database
-    //   const parentData = await parentCollection.findOne({ parent_id: parentID });
-    
-    //   // Send response back to client
-    //   res.status(200).json(parentData);
-    // });
+        if (student) {
+          // If the student is found, send back the parent_id
+          res.status(200).json({ parent_id: student.parent_id });
+        } else {
+          // If no student is found, send an appropriate response
+          res.status(404).json({ message: "Student not found" });
+        }
+      } catch (error) {
+        console.error("Error fetching parent ID:", error);
+        res.status(500).json({ message: "Error fetching parent ID" });
+      }
+    });
     
 
-
-
-    //end point to get class information
     app.post("/getClass", async (req, res) => {
       await client.connect();
       const classes = await classCollection.findOne({
@@ -221,6 +406,60 @@ async function startServer() {
       } catch (error) {
         console.error("Error fetching students:", error);
         res.status(500).json({ message: "Error fetching students" });
+      }
+    });
+
+    app.post("/getStudentAllDetails", async (req, res) => {
+      try {
+        await client.connect();
+        const { studentID } = req.body;
+        const student = await studentCollection.findOne({ studentID: studentID });
+        if (student) {
+          res.status(200).json(student);
+        } else {
+          res.status(404).json({ message: "Student not found" });
+        }
+      } catch (error) {
+        console.error("Error fetching student details:", error);
+        res.status(500).json({ message: "Error fetching student details" });
+      }
+    });
+
+    app.post("/getCompleteStudentDetails", async (req, res) => {
+      try {
+        await client.connect();
+        const { studentID } = req.body;
+        const student = await studentCollection.findOne({ studentID: studentID });
+    
+        if (student) {
+          res.status(200).json(student);
+        } else {
+          res.status(404).json({ message: "Student not found" });
+        }
+      } catch (error) {
+        console.error("Error fetching complete student details:", error);
+        res.status(500).json({ message: "Error fetching complete student details" });
+      }
+    });
+
+    app.post("/getStudentDetails", async (req, res) => {
+      try {
+        await client.connect();
+        const { studentID } = req.body;
+    
+        // Query the 'Student' collection for the given studentID
+        const student = await studentCollection.findOne({ studentID: studentID });
+    
+        if (student) {
+          // If the student is found, send the first and last names
+          res.status(200).json({ fname: student.fname, lname: student.lname });
+        } else {
+          // If no student is found, send an appropriate response
+          res.status(404).json({ message: "Student not found" });
+        }
+      } catch (error) {
+        console.error("Error fetching student details:", error);
+        res.status(500).json({ message: "Error fetching student details" });
       }
     });
 

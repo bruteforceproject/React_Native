@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, TextInput, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ImageBackground } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const goodColor = "#558c3b";
 const okColor = "#f2ca52";
 const badColor = "#f25d50";
@@ -18,8 +19,8 @@ function StudentOverview({route,navigation}) {
     // Ensure that the studentData is available before proceeding
     const { myData } = route.params;
     if (myData) {
-      const studentData = myData;
-      setStudentData(studentData);
+        const studentData = myData;
+        setStudentData(studentData);
 
       const periodFields = [
         studentData.period0,
@@ -37,7 +38,7 @@ function StudentOverview({route,navigation}) {
         const combinedDataPromises = periodFields.map(async (periodID) => {
           try {
             // Fetch attendance data
-            const attendanceResponse = await fetch('http://localhost:8000/getAttendance', {
+            const attendanceResponse = await fetch('http://192.168.0.19:8000/getAttendance', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -50,7 +51,7 @@ function StudentOverview({route,navigation}) {
             const attendanceInfo = await attendanceResponse.json();
 
             // Fetch behavior data
-            const behaviorResponse = await fetch('http://localhost:8000/getBehavior', {
+            const behaviorResponse = await fetch('http://192.168.0.19:8000/getBehavior', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -63,7 +64,7 @@ function StudentOverview({route,navigation}) {
             const behaviorInfo = await behaviorResponse.json();
 
             // Fetch academics data
-            const academicsResponse = await fetch('http://localhost:8000/getAcademics', {
+            const academicsResponse = await fetch('http://192.168.0.19:8000/getAcademics', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ function StudentOverview({route,navigation}) {
             const academicsInfo = await academicsResponse.json();
 
             // Fetch class data
-            const classResponse = await fetch('http://localhost:8000/getClass', {
+            const classResponse = await fetch('http://192.168.0.19:8000/getClass', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -89,7 +90,7 @@ function StudentOverview({route,navigation}) {
             const classInfo = await classResponse.json();
 
             // Fetch teacher data based on classInfo
-            const teacherResponse = await fetch('http://localhost:8000/getTeacher', {
+            const teacherResponse = await fetch('http://192.168.0.19:8000/getTeacher', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -128,6 +129,28 @@ function StudentOverview({route,navigation}) {
 
     
   }, [route.params]);
+
+  const fetchParentId = async (studentId) => {
+    try {
+      const response = await fetch('http://192.168.0.19:8000/getParentIdByStudentId', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ studentID: studentId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching parent ID:", error);
+    }
+  };
+
+
   
   return (
     
@@ -239,9 +262,15 @@ function StudentOverview({route,navigation}) {
       </ScrollView>
 
       <TouchableOpacity
-        style = {styles.goBackButton}
-        onPress = {() => {
-          navigation.navigate('ParentView');
+        style={styles.goBackButton}
+        onPress={async () => {
+          const parentIdData = await fetchParentId(studentData.studentID);
+          if (parentIdData && parentIdData.parent_id) {
+            console.log("Parent ID:", parentIdData.parent_id);
+            navigation.navigate('ParentView', { parent_id: parentIdData.parent_id });
+          } else {
+            console.log("Parent ID not found for student");
+          }
         }}
       >
         <Text style={styles.goBackButtonText}>Back to Parent View</Text>
