@@ -38,7 +38,7 @@ function StudentOverview({route,navigation}) {
         const combinedDataPromises = periodFields.map(async (periodID) => {
           try {
             // Fetch attendance data
-            const attendanceResponse = await fetch('http://192.168.0.19:8000/getAttendance', {
+            const attendanceResponse = await fetch('http://localhost:8000/getAttendance', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ function StudentOverview({route,navigation}) {
             const attendanceInfo = await attendanceResponse.json();
 
             // Fetch behavior data
-            const behaviorResponse = await fetch('http://192.168.0.19:8000/getBehavior', {
+            const behaviorResponse = await fetch('http://localhost:8000/getBehavior', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ function StudentOverview({route,navigation}) {
             const behaviorInfo = await behaviorResponse.json();
 
             // Fetch academics data
-            const academicsResponse = await fetch('http://192.168.0.19:8000/getAcademics', {
+            const academicsResponse = await fetch('http://localhost:8000/getAcademics', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ function StudentOverview({route,navigation}) {
             const academicsInfo = await academicsResponse.json();
 
             // Fetch class data
-            const classResponse = await fetch('http://192.168.0.19:8000/getClass', {
+            const classResponse = await fetch('http://localhost:8000/getClass', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ function StudentOverview({route,navigation}) {
             const classInfo = await classResponse.json();
 
             // Fetch teacher data based on classInfo
-            const teacherResponse = await fetch('http://192.168.0.19:8000/getTeacher', {
+            const teacherResponse = await fetch('http://localhost:8000/getTeacher', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ function StudentOverview({route,navigation}) {
 
   const fetchParentId = async (studentId) => {
     try {
-      const response = await fetch('http://192.168.0.19:8000/getParentIdByStudentId', {
+      const response = await fetch('http://localhost:8000/getParentIdByStudentId', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

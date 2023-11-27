@@ -69,7 +69,7 @@ async function startServer() {
 
     const fetchClassDetails = async (classId) => {
       try {
-        const response = await fetch('http://192.168.0.19:8000/getClass', {
+        const response = await fetch('http://localhost:8000/getClass', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ class_id: classId })
@@ -527,7 +527,7 @@ app.post("/acknowledgeAttendanceAlerts", async (req, res) => {
     app.post("/start-verify", async (req, res)  => {
       const {phone, email} = req.body
 
-      yessir.verify.v2.services('xxxx')
+      yessir.verify.v2.services('xx')
         .verifications
         .create({to: phone, channel: 'sms'})
         .then(verification => console.log(verification.status));
@@ -536,7 +536,7 @@ app.post("/acknowledgeAttendanceAlerts", async (req, res) => {
     app.post("/start-check", async (req, res)  => {
       const { code, phone } = req.body
       
-      yessir.verify.v2.services('xxxx')
+      yessir.verify.v2.services('xx')
         .verificationChecks
         .create({to: phone, code: code})
         .then(verification_check => {
@@ -569,6 +569,30 @@ app.post("/acknowledgeAttendanceAlerts", async (req, res) => {
           return updatedDocument
         })
         .catch(err => console.error(`Failed to find and update document: ${err}`))   
+    })
+
+    app.post("/get-alerts", async(req, res) => {
+      try {
+        const { studentID } = req.body;
+        const student = await studentCollection.findOne({ studentID })
+
+        const academicAlerts = await academicsCollection.find({ studentID }).toArray();
+        const behaviourAlerts = await behaviorCollection.find({ studentID }).toArray();
+        const attendanceAlerts = await attendanceCollection.find({ studentID }).toArray();
+
+        if (student) {
+          return res.status(200).json({
+            academicAlerts, 
+            behaviourAlerts, 
+            attendanceAlerts,
+            studentName: student.fname
+          });
+        }
+
+      } catch(error){
+        console.log("Couldn't find email", error);
+        res.status(500).json({message: "Oops"})
+      }
     })
 
     // Start the Express server

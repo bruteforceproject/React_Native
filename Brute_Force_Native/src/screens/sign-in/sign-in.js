@@ -18,7 +18,7 @@ const SignInScreen = () => {
 
     const onSignInPressed = async () => {
         try {
-            const response = await fetch("http://192.168.0.19:8000/login", {
+            const response = await fetch("http://localhost:8000/login", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -66,28 +66,29 @@ const SignInScreen = () => {
             <FieldInput 
                 placeholder='Email' 
                 value={email} 
-                setValue={setEmail}/>
+                setValue={setEmail}
+            />
 
             <FieldInput 
                 placeholder='Password' 
                 value={password} 
                 setValue={setPassword}
                 secureTextEntry
-                />
+            />
         
             <SignInButton 
                 text='Sign In' 
                 onPress={onSignInPressed}
                 fieldType='blue_button'
                 textType='button_white_bold'
-                />
+            />
 
             <SignInButton 
                 text='Forgot email or password?' 
                 onPress={onForgotPressed}
                 fieldType='tertiary'
                 textType='link'
-                />
+            />
         </View>
     );
 };

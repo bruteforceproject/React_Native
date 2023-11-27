@@ -13,7 +13,7 @@ const ParentView = ({ route, navigation }) => {
 
   const fetchUnacknowledgedAlertsCount = async (studentID) => {
     try {
-      const response = await fetch('http://192.168.0.19:8000/countUnacknowledgedAlerts', {
+      const response = await fetch('http://localhost:8000/countUnacknowledgedAlerts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ studentID })
@@ -37,7 +37,7 @@ const ParentView = ({ route, navigation }) => {
 
   const fetchStudents = async () => {
     try {
-      const response = await fetch('http://192.168.0.19:8000/getStudentsByParent', {
+      const response = await fetch('http://localhost:8000/getStudentsByParent', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ parent_id: parent_id }),
@@ -63,7 +63,7 @@ const ParentView = ({ route, navigation }) => {
     // Function to fetch parent details
     const fetchParent = async () => {
       try {
-        const response = await fetch('http://192.168.0.19:8000/getParent', {
+        const response = await fetch('http://localhost:8000/getParent', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ parent_id: parent_id }),
@@ -84,7 +84,7 @@ const ParentView = ({ route, navigation }) => {
 
     const fetchUnacknowledgedBehaviorAlertsCount = async (studentID) => {
       try {
-        const response = await fetch('http://192.168.0.19:8000/countUnacknowledgedBehaviorAlerts', {
+        const response = await fetch('http://localhost:8000/countUnacknowledgedBehaviorAlerts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ studentID })
@@ -140,7 +140,7 @@ const ParentView = ({ route, navigation }) => {
 
     const fetchCompleteStudentDetails = async () => {
   try {
-    const response = await fetch('http://192.168.0.19:8000/getCompleteStudentDetails', {
+    const response = await fetch('http://localhost:8000/getCompleteStudentDetails', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ studentID: studentId })
