@@ -1,47 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  Button,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Image,
-} from 'react-native';
+import { View, Text, Button, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Calendar } from 'react-native-calendars';
+import moment from 'moment';
 
 const StudentHistory = () => {
   const navigation = useNavigation();
+  const [attendanceEvents, setAttendanceEvents] = useState([]);
+  const [academicEvents, setAcademicEvents] = useState([]);
+  const [behaviorEvents, setBehaviorEvents] = useState([]);
+  const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all');
   const [markedDates, setMarkedDates] = useState({});
 
-  const events = [
-    { date: '2023-11-10', description: 'Math Test', category: 'Academic', status: 'good' },
-    { date: '2023-11-09', description: 'Late Arrival', category: 'Attendance', status: 'yellow' },
-    { date: '2023-11-08', description: 'Class Participation', category: 'Behavior', status: 'green' },
-    { date: '2023-11-12', description: 'Science Project', category: 'Academic', status: 'bad' },
-    { date: '2023-11-15', description: 'Missed Homework', category: 'Academic', status: 'bad' },
-    { date: '2023-11-14', description: 'Group Presentation', category: 'Academic', status: 'good' },
-    { date: '2023-10-05', description: 'Unexcused Absence', category: 'Attendance', status: 'red' },
-    { date: '2023-09-30', description: 'Sports Day Participation', category: 'Behavior', status: 'green' },
-    { date: '2023-09-25', description: 'Late Submission', category: 'Academic', status: 'yellow' },
-    { date: '2023-09-18', description: 'Perfect Attendance', category: 'Attendance', status: 'green' },
-    { date: '2023-09-10', description: 'Disturbing Class', category: 'Behavior', status: 'red' },
-    { date: '2023-08-30', description: 'Art Competition Winner', category: 'Academic', status: 'good' },
-    { date: '2023-08-22', description: 'Tardiness', category: 'Attendance', status: 'yellow' },
-    { date: '2023-08-15', description: 'Helping Peers', category: 'Behavior', status: 'green' },
-    { date: '2023-08-05', description: 'Book Report', category: 'Academic', status: 'good' },
-    { date: '2023-07-28', description: 'School Play Lead Role', category: 'Behavior', status: 'green' },
-    { date: '2023-07-20', description: 'Failed Quiz', category: 'Academic', status: 'bad' },
-    { date: '2023-07-12', description: 'School Picnic', category: 'Behavior', status: 'green' },
-    { date: '2023-07-05', description: 'Absent due to Illness', category: 'Attendance', status: 'yellow' }
-];
-
+  useEffect(() => {
+    const fetchCategoryData = async (endpoint, setCategoryEvents) => {
+      try {
+        const response = await fetch(`http://localhost:8000/${endpoint}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ studentID: 'your_student_id', class_id: 'your_class_id' }),
+        });
   
-useEffect(() => {
-  setMarkedDates(getMarkedDates(events));
-}, [events]);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+  
+        const fetchedEvents = await response.json();
+        setCategoryEvents(fetchedEvents);
+      } catch (error) {
+        // Log the error to the console instead of setting it to the state
+        console.error(`Error fetching ${endpoint} data:`, error);
+      }
+    };
+  
+    fetchCategoryData('getAttendance', setAttendanceEvents);
+    fetchCategoryData('getAcademics', setAcademicEvents);
+    fetchCategoryData('getBehavior', setBehaviorEvents);
+  }, []);
+  
+  
+  useEffect(() => {
+    // Combine all events for marking dates on the calendar
+    const combinedEvents = [...attendanceEvents, ...academicEvents, ...behaviorEvents];
+    setMarkedDates(getMarkedDates(combinedEvents));
+  }, [attendanceEvents, academicEvents, behaviorEvents]);
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -73,20 +78,25 @@ useEffect(() => {
     return newMarkedDates;
   };
 
-  const handleMonthChange = (month) => {
+   // Updated handleMonthChange function
+   const handleMonthChange = (month) => {
     const monthStr = month.month < 10 ? `0${month.month}` : month.month.toString();
     const yearStr = month.year.toString();
     
-    // Filter events for the selected month and update the markedDates state
-    const monthEvents = events.filter(event => {
-      const eventDate = new Date(event.date);
-      return eventDate.getFullYear() === month.year &&
-             (eventDate.getMonth() + 1) === month.month;
-    });
+    const filterEventsByMonth = (events) => {
+      return events.filter(event => {
+        const eventDate = new Date(event.date);
+        return eventDate.getFullYear() === month.year &&
+               (eventDate.getMonth() + 1) === month.month;
+      });
+    };
   
+    const monthAttendanceEvents = filterEventsByMonth(attendanceEvents);
+    const monthAcademicEvents = filterEventsByMonth(academicEvents);
+    const monthBehaviorEvents = filterEventsByMonth(behaviorEvents);
+  
+    const monthEvents = [...monthAttendanceEvents, ...monthAcademicEvents, ...monthBehaviorEvents];
     setMarkedDates(getMarkedDates(monthEvents));
-    
-    // Update the filter for the events list to reflect the selected month
     setFilter(`${yearStr}-${monthStr}`);
   };
 
@@ -126,25 +136,79 @@ useEffect(() => {
   };
   
 
-  const filteredEvents = events.filter(event => isWithinPeriod(event.date, filter));
 
-  const renderEventTiles = (category) => {
-  return events
-    .filter(event => {
-      return filter === 'all' || event.date.startsWith(filter);
-    })
-    .filter(event => event.category === category)
-      .map((event, index) => (
-        <View key={index} style={styles.eventTile}>
-          <View style={[styles.statusDot, { backgroundColor: getStatusColor(event.status) }]} />
-          <Text style={styles.eventDateText}>{new Date(event.date).toLocaleDateString()}</Text>
-          <Text style={styles.eventDescription}>{event.description}</Text>
-        </View>
-      ));
+   const renderEventTiles = (category) => {
+    let categoryEvents = [];
+    switch (category.toLowerCase()) {
+      case 'academic':
+        categoryEvents = academicEvents;
+        break;
+      case 'attendance':
+        categoryEvents = attendanceEvents;
+        break;
+      case 'behavior':
+        categoryEvents = behaviorEvents;
+        break;
+      default:
+        return <Text>No such category</Text>;
+    }
+
+    if (categoryEvents.length === 0) {
+      return <Text style={styles.noEventsText}>No events in this category</Text>;
+    }
+
+    return categoryEvents.filter(event => isWithinPeriod(event.date, filter)).map((event, index) => (
+      <EventTile
+        key={index}
+        date={event.date}
+        status={event.status}
+        category={event.category}
+        description={event.description}
+      />
+    ));
   };
+
+  const allEvents = [...attendanceEvents, ...academicEvents, ...behaviorEvents];
+
+  const filteredEvents = allEvents.filter(event => isWithinPeriod(event.date, filter));
+
+
+  const EventTile = ({ date, status, category, description }) => {
+    const formattedDate = moment(date).format('dddd, MM/DD/YYYY');
+    const getStatusColor = (status) => {
+      switch (status) {
+        case 'good': return 'green';
+        case 'satisfactory': return 'yellow';
+        case 'bad': return 'red';
+        default: return 'black';
+      }
+    };
+
+    return (
+      <View style={styles.eventTile}>
+        <View style={[styles.statusCircle, { backgroundColor: getStatusColor(status) }]} />
+        <Text style={styles.eventDate}>{formattedDate}</Text>
+        <Text>{category}</Text>
+        <Text>{description}</Text>
+      </View>
+    );
+  };
+
+  console.log('Rendering main component');
+
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text>Error fetching events: {error.message}</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
+      {error && <Text style={styles.errorText}>Error fetching events: {error.message}</Text>}
+
       <Image source={require('../assets/logo1.png')} style={styles.logo} />
       <Calendar
         // Other props...
@@ -186,29 +250,40 @@ useEffect(() => {
         </TouchableOpacity>
       </View>
       <View style={styles.categoryContainer}>
-        <Text style={styles.categoryLabel}>Academic</Text>
-        <ScrollView style={styles.scrollContainer}>
-          {renderEventTiles('Academic')}
-        </ScrollView>
-      </View>
+      <Text style={styles.categoryLabel}>Academic</Text>
+      <ScrollView style={styles.scrollContainer}>
+        {renderEventTiles('Academic')}
+      </ScrollView>
+    </View>
+
       <View style={styles.categoryContainer}>
         <Text style={styles.categoryLabel}>Attendance</Text>
         <ScrollView style={styles.scrollContainer}>
           {renderEventTiles('Attendance')}
         </ScrollView>
       </View>
+
       <View style={styles.categoryContainer}>
         <Text style={styles.categoryLabel}>Behavior</Text>
         <ScrollView style={styles.scrollContainer}>
           {renderEventTiles('Behavior')}
         </ScrollView>
       </View>
+
       <Button title="Back to Student Overview" onPress={() => navigation.goBack()} />
+
+        {/* Display error message at the bottom or in a less obstructive way */}
+    {error && <Text style={styles.errorText}>Error fetching events: {error.message}</Text>}
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  noEventsText: {
+    textAlign: 'center',
+    color: 'grey',
+    marginTop: 10,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
