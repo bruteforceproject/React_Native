@@ -13,7 +13,6 @@ import ParentView from '../../components/parentView'; // This should match what 
 import StudentOverview from '../../components/studentOverview';
 import AcknowledgeView from "../../components/acknowledgeView";
 import StudentHistory from "../../components/studentHistory";
-import CounselorView from "../../components/counselorView";
 
 
 const Stack = createStackNavigator();
@@ -33,7 +32,6 @@ const Navigation = () => {
                 <Stack.Screen name="StudentOverview" component={StudentOverview} />
                 <Stack.Screen name="AcknowledgeView" component={AcknowledgeView} />
                 <Stack.Screen name="StudentHistory" component={StudentHistory} />
-                <Stack.Screen name="CounselorView" component={CounselorView} />
             </Stack.Navigator>
         </NavigationContainer>
     )

@@ -275,15 +275,6 @@ function StudentOverview({route,navigation}) {
       >
         <Text style={styles.goBackButtonText}>Back to Parent View</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.goBackButton}
-        onPress={() => {
-          navigation.navigate('CounselorView'); // Navigate to CounselorView
-        }}
-      >
-        <Text style={styles.goToCounselorViewButtonText}>Go to Counselor View</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -319,17 +310,24 @@ const styles = StyleSheet.create({
   },
   id: {
     fontSize: 16,
+    fontWeight: 'bold',
   },
     
   body: {}, //allows for scroll
 
   periodCard: {
-    marginBottom: 20,
-    borderWidth: 2,
-    borderColor: '#ccc',
-    padding: 20,
-    borderRadius: 10,
+    position: 'relative',
+    borderWidth: 1.5,
+    borderColor: 'black',
+    backgroundColor: 'lightgray',
+    borderRadius: 25,
+    padding: 7,
+    margin: 30,
+    shadowColor: 'gray',
+    shadowOffset: { width: 7, height: 7 },
+    shadowOpacity: 0.5,
   },
+
   periodText: {
     fontSize: 18,
   },
@@ -338,17 +336,28 @@ const styles = StyleSheet.create({
   },
 
   imageContainer: {
+    position: 'relative',
+    display: 'flex',
     flexDirection: 'row',
+    flex: 1,
     alignItems: 'center',
-    marginTop: 10,
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
 
   image: {
     width: 100,
     height: 100,
+    borderRadius: 50,
     marginTop: 10,
     marginLeft: 10,
+    objectFit: 'contain',
+    borderWidth: 2,
+    borderColor: 'black',
+    padding: 20,
+
   },
+  
   teacherText: {
     fontSize: 16,
     marginTop: 10,
