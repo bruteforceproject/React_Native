@@ -1,52 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react'; // Import useState
 import { View, Text, Button, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Calendar } from 'react-native-calendars';
 import moment from 'moment';
 
-const StudentHistory = () => {
+const StudentHistory = ({ route }) => {
   const navigation = useNavigation();
-  const [attendanceEvents, setAttendanceEvents] = useState([]);
-  const [academicEvents, setAcademicEvents] = useState([]);
-  const [behaviorEvents, setBehaviorEvents] = useState([]);
-  const [error, setError] = useState(null);
-  const [filter, setFilter] = useState('all');
-  const [markedDates, setMarkedDates] = useState({});
-
-  useEffect(() => {
-    const fetchCategoryData = async (endpoint, setCategoryEvents) => {
-      try {
-        const response = await fetch(`http://localhost:8000/${endpoint}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ studentID: 'your_student_id', class_id: 'your_class_id' }),
-        });
-  
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-  
-        const fetchedEvents = await response.json();
-        setCategoryEvents(fetchedEvents);
-      } catch (error) {
-        // Log the error to the console instead of setting it to the state
-        console.error(`Error fetching ${endpoint} data:`, error);
-      }
-    };
-  
-    fetchCategoryData('getAttendance', setAttendanceEvents);
-    fetchCategoryData('getAcademics', setAcademicEvents);
-    fetchCategoryData('getBehavior', setBehaviorEvents);
-  }, []);
-  
-  
-  useEffect(() => {
-    // Combine all events for marking dates on the calendar
-    const combinedEvents = [...attendanceEvents, ...academicEvents, ...behaviorEvents];
-    setMarkedDates(getMarkedDates(combinedEvents));
-  }, [attendanceEvents, academicEvents, behaviorEvents]);
+  // Ensure classData is also passed from the StudentOverview component
+  const { attendanceData, academicsData, behaviorData, studentName, studentID, classData } = route.params;
+  const [filter, setFilter] = useState('all'); // Add this state if needed for filtering
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -64,6 +26,18 @@ const StudentHistory = () => {
     }
   };
 
+  console.log("Attendance Data:", attendanceData);
+  console.log("Academics Data:", academicsData);
+  console.log("Behavior Data:", behaviorData);
+  console.log("Class Data:", classData);
+
+ 
+  const getClassNameById = (class_id, classData) => {
+    // Assuming classData is correctly passed as an array of objects
+    const classInfo = classData.find(c => c.class_id === class_id);
+    return classInfo ? classInfo.className : 'Unknown Class';
+  };
+
   const getMarkedDates = (events) => {
     const newMarkedDates = {};
     events.forEach(event => {
@@ -78,23 +52,18 @@ const StudentHistory = () => {
     return newMarkedDates;
   };
 
-   // Updated handleMonthChange function
-   const handleMonthChange = (month) => {
+  const [markedDates, setMarkedDates] = useState({});
+
+  // Updated handleMonthChange function
+  const handleMonthChange = (month) => {
     const monthStr = month.month < 10 ? `0${month.month}` : month.month.toString();
     const yearStr = month.year.toString();
-    
-    const filterEventsByMonth = (events) => {
-      return events.filter(event => {
-        const eventDate = new Date(event.date);
-        return eventDate.getFullYear() === month.year &&
-               (eventDate.getMonth() + 1) === month.month;
-      });
-    };
-  
-    const monthAttendanceEvents = filterEventsByMonth(attendanceEvents);
-    const monthAcademicEvents = filterEventsByMonth(academicEvents);
-    const monthBehaviorEvents = filterEventsByMonth(behaviorEvents);
-  
+
+    // You need to define monthAttendanceEvents, monthAcademicEvents, and monthBehaviorEvents
+    const monthAttendanceEvents = filterEventsByMonth(attendanceData, month);
+    const monthAcademicEvents = filterEventsByMonth(academicsData, month);
+    const monthBehaviorEvents = filterEventsByMonth(behaviorData, month);
+
     const monthEvents = [...monthAttendanceEvents, ...monthAcademicEvents, ...monthBehaviorEvents];
     setMarkedDates(getMarkedDates(monthEvents));
     setFilter(`${yearStr}-${monthStr}`);
@@ -136,149 +105,180 @@ const StudentHistory = () => {
   };
   
 
-
-   const renderEventTiles = (category) => {
-    let categoryEvents = [];
-    switch (category.toLowerCase()) {
-      case 'academic':
-        categoryEvents = academicEvents;
-        break;
+  const renderEventTiles = (category) => {
+    const categoryLower = category.toLowerCase();
+    console.log(`Received category: ${category}, converted to lowercase: ${categoryLower}`);
+  
+    let events;
+    switch (categoryLower) {
       case 'attendance':
-        categoryEvents = attendanceEvents;
+        events = attendanceData;
+        break;
+      case 'academics':
+        events = academicsData;
         break;
       case 'behavior':
-        categoryEvents = behaviorEvents;
+        events = behaviorData;
         break;
       default:
-        return <Text>No such category</Text>;
+        console.error(`Unknown category: ${category}`);
+        return <Text style={styles.noEventsText}>Unknown category.</Text>;
+    }
+    // Ensure events is an array and has content
+    if (!Array.isArray(events) || events.length === 0) {
+      console.error(`The events for category ${category} is not an array or is empty:`, events);
+      return <Text style={styles.noEventsText}>No events available for this category.</Text>;
     }
 
-    if (categoryEvents.length === 0) {
-      return <Text style={styles.noEventsText}>No events in this category</Text>;
-    }
-
-    return categoryEvents.filter(event => isWithinPeriod(event.date, filter)).map((event, index) => (
+    return events.map((event, index) => (
       <EventTile
         key={index}
         date={event.date}
-        status={event.status}
-        category={event.category}
-        description={event.description}
+        color={event.color}
+        className={getClassNameById(event.class_id, classData)}
+        description={category === 'Behavior' ? event.description : ''}
       />
     ));
   };
 
-  const allEvents = [...attendanceEvents, ...academicEvents, ...behaviorEvents];
+  const filterEventsByMonth = (events, month) => {
+    return events.filter(event => {
+      const eventDate = new Date(event.date);
+      return eventDate.getFullYear() === month.year &&
+             (eventDate.getMonth() + 1) === month.month;
+    });
+  };
 
-  const filteredEvents = allEvents.filter(event => isWithinPeriod(event.date, filter));
-
-
-  const EventTile = ({ date, status, category, description }) => {
+  const EventTile = ({ date, color, className, description }) => {
     const formattedDate = moment(date).format('dddd, MM/DD/YYYY');
-    const getStatusColor = (status) => {
-      switch (status) {
-        case 'good': return 'green';
-        case 'satisfactory': return 'yellow';
-        case 'bad': return 'red';
-        default: return 'black';
-      }
-    };
-
+    
     return (
       <View style={styles.eventTile}>
-        <View style={[styles.statusCircle, { backgroundColor: getStatusColor(status) }]} />
-        <Text style={styles.eventDate}>{formattedDate}</Text>
-        <Text>{category}</Text>
-        <Text>{description}</Text>
+        <View style={[styles.statusCircle, { backgroundColor: color }]} />
+        <View style={styles.eventDetails}>
+          <Text style={styles.eventDate}>{formattedDate}</Text>
+          <Text style={styles.className}>{className}</Text>
+          {description && <Text style={styles.eventDescription}>{description}</Text>}
+        </View>
       </View>
     );
   };
-
-  console.log('Rendering main component');
-
-
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <Text>Error fetching events: {error.message}</Text>
-      </View>
-    );
-  }
+  
+  
+  
+  
 
   return (
     <ScrollView style={styles.container}>
-      {error && <Text style={styles.errorText}>Error fetching events: {error.message}</Text>}
-
       <Image source={require('../assets/logo1.png')} style={styles.logo} />
+      <View style={styles.studentInfo}>
+        <Text style={styles.studentName}>{studentName}</Text>
+        <Text style={styles.studentId}>Student ID: {studentID}</Text>
+      </View>
       <Calendar
-        // Other props...
+        // Calendar props...
         markedDates={markedDates}
         markingType={'dot'}
-        onMonthChange={(month) => {
-    handleMonthChange(month);
-  }}
-        // The rest of your calendar props
-        theme={{
-          calendarBackground: '#ffffff',
-          monthTextColor: '#000000',
-          dayTextColor: '#000000',
-          todayTextColor: '#00adf5',
-          arrowColor: '#00adf5',
-          dotColor: '#f25d50',
-        }}
-        enableSwipeMonths={true}
-  // Render custom arrows if necessary
-  renderArrow={(direction) => (
-    <View>
-      {direction === 'left' ? (
-        <Text>{'<'}</Text> // Replace with your custom left arrow icon
-      ) : (
-        <Text>{'>'}</Text> // Replace with your custom right arrow icon
-      )}
-    </View>
-  )}
-/>
+        onMonthChange={handleMonthChange}
+        // Other calendar props
+      />
       <View style={styles.filterButtons}>
-        <TouchableOpacity onPress={() => setFilter('all')} style={styles.filterButton}>
-          <Text>All</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setFilter('week')} style={styles.filterButton}>
-          <Text>Week</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setFilter('month')} style={styles.filterButton}>
-          <Text>Month</Text>
-        </TouchableOpacity>
+        {/* Filter buttons... */}
       </View>
+
       <View style={styles.categoryContainer}>
-      <Text style={styles.categoryLabel}>Academic</Text>
-      <ScrollView style={styles.scrollContainer}>
-        {renderEventTiles('Academic')}
-      </ScrollView>
-    </View>
+        <Text style={styles.categoryLabel}>Academics</Text>
+        <ScrollView style={styles.scrollContainer}>
+          {renderEventTiles('Academics', academicsData)}
+        </ScrollView>
+      </View>
 
       <View style={styles.categoryContainer}>
         <Text style={styles.categoryLabel}>Attendance</Text>
         <ScrollView style={styles.scrollContainer}>
-          {renderEventTiles('Attendance')}
+          {renderEventTiles('Attendance', attendanceData)}
         </ScrollView>
       </View>
 
       <View style={styles.categoryContainer}>
         <Text style={styles.categoryLabel}>Behavior</Text>
         <ScrollView style={styles.scrollContainer}>
-          {renderEventTiles('Behavior')}
+          {renderEventTiles('Behavior', behaviorData)}
         </ScrollView>
       </View>
 
       <Button title="Back to Student Overview" onPress={() => navigation.goBack()} />
-
-        {/* Display error message at the bottom or in a less obstructive way */}
-    {error && <Text style={styles.errorText}>Error fetching events: {error.message}</Text>}
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
+
+  eventTile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  statusCircle: {
+    width: 15,
+    height: 15,
+    borderRadius: 7.5,
+    marginRight: 10, // Space between the circle and text
+  },
+  eventDetails: {
+    flex: 1,
+  },
+   statusCircle: {
+    width: 20, // Adjust the size as needed
+    height: 20, // Adjust the size as needed
+    borderRadius: 10, // Make it circular
+    marginLeft: 10, // Space from left edge of tile
+  },
+  eventText: {
+    flex: 1,
+    marginLeft: 10, // Space between circle and text
+  },
+  eventTile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  eventDate: {
+    fontSize: 16,
+    marginBottom: 5, // Add some space between the date and class name
+  },
+  eventClass: {
+    fontSize: 14,
+    color: 'grey', // Optional: style the class name differently if desired
+  },
+  statusIndicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 6,
+    alignSelf: 'center', // Center the dot vertically within the tile
+  },
+  
+  studentInfo: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  studentName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  studentId: {
+    fontSize: 16,
+  },
   noEventsText: {
     textAlign: 'center',
     color: 'grey',
