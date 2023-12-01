@@ -54,12 +54,12 @@ async function startServer() {
       try {
         await client.connect();
         const { studentID } = req.body;
-        console.log("Counting unacknowledged alerts for studentID:", studentID);
+        //console.log("Counting unacknowledged alerts for studentID:", studentID);
         const count = await academicsCollection.countDocuments({
           studentID: studentID,
           acknowledged: false
         });
-        console.log("Unacknowledged alerts count:", count);
+        //console.log("Unacknowledged alerts count:", count);
         res.status(200).json({ count });
       } catch (error) {
         console.error("Error counting unacknowledged alerts:", error);
@@ -229,7 +229,7 @@ async function startServer() {
               res.status(200).json({ message: "Academic alerts acknowledged successfully" });
           } else {
               // Handle case where no documents were updated
-              console.log("No academic alerts to acknowledge.");
+              //console.log("No academic alerts to acknowledge.");
               res.status(200).json({ message: "No academic alerts to acknowledge" });
           }
       } catch (error) {

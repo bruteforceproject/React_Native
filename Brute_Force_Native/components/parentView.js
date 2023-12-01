@@ -20,7 +20,7 @@ const ParentView = ({ route, navigation }) => {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log(`Academics alerts count for student ${studentID}:`, data.count);
+        //console.log(`Academics alerts count for student ${studentID}:`, data.count);
         return data.count;
       } else {
         console.error('Failed to fetch alerts count:', response.statusText);
@@ -91,7 +91,7 @@ const ParentView = ({ route, navigation }) => {
         });
         if (response.ok) {
           const data = await response.json();
-          console.log(`Behavior alerts count for student ${studentID}:`, data.count);
+          //console.log(`Behavior alerts count for student ${studentID}:`, data.count);
           return data.count;
         } else {
           console.error('Failed to fetch behavior alerts count:', response.statusText);
@@ -163,18 +163,28 @@ useFocusEffect(
     const fetchData = async () => {
       await fetchStudents();
       await fetchParent();
-      if (students.length > 0) {
-        await updateStudentsWithAlertsCount();
-      }
     };
 
     fetchData();
-
-    return () => {
-      // Cleanup (if needed)
-    };
   }, [parent_id])
 );
+
+useEffect(() => {
+  const updateAlertsCount = async () => {
+    const updatedStudents = await Promise.all(students.map(async (student) => {
+      const academicsCount = await fetchUnacknowledgedAlertsCount(student.studentID);
+      const behaviorCount = await fetchUnacknowledgedBehaviorAlertsCount(student.studentID);
+      const attendanceCount = await fetchUnacknowledgedAttendanceAlertsCount(student.studentID);
+      const totalAlertsCount = academicsCount + behaviorCount + attendanceCount;
+      return { ...student, alertsCount: totalAlertsCount };
+    }));
+    setStudents(updatedStudents);
+  };
+
+  if (students.length > 0) {
+    updateAlertsCount();
+  }
+}, [students]); 
 
 
   useEffect(() => {
@@ -247,7 +257,7 @@ useFocusEffect(
       navigation.navigate('StudentOverview', { myData: student });
     } else {
       navigation.navigate('AcknowledgeView', { studentId: student.studentID });
-      console.log("There are alerts for this student.");
+      //console.log("There are alerts for this student.");
     }
   };
 

@@ -263,6 +263,9 @@ const AcknowledgeView = ({ route }) => {
 
   const getAttendanceStatus = (color, date, classInfo, teacherInfo) => {
     console.log('Attendance Alert:', { color, date, classInfo, teacherInfo });
+    if (!classInfo || !teacherInfo) {
+      return 'Loading...'; // This will display a loading message until the data is available
+    }
     const teacherName = teacherInfo ? `${teacherInfo.fname} ${teacherInfo.lname}` : '';
     switch (color) {
       case '#f2ca52':

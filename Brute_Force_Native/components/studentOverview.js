@@ -160,7 +160,14 @@ function StudentOverview({route,navigation}) {
       <View style={styles.header}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('StudentHistory');
+              navigation.navigate('StudentHistory', {
+                attendanceData: attendanceData,
+                academicsData: academicsData,
+                behaviorData: behaviorData,
+                studentName: `${studentData.fname} ${studentData.lname}`, 
+                studentID: studentData.studentID ,
+                classData: classData 
+              });
             }}
           >
             <Text style={styles.name}>
